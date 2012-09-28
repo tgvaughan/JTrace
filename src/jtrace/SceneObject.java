@@ -19,6 +19,10 @@ package jtrace;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 /**
+ * Abstract class for an object in a scene.  The primary method which needs
+ * to be implemented for any real object is the getFirstCollision() method
+ * responsible for determining where rays hit the object and the surface
+ * normal of the object at those points.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */

@@ -14,35 +14,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package jtrace;
+package jtrace.texture;
 
-import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+import jtrace.Colour;
+import jtrace.Texture;
 
 /**
- * Basic point light source.
+ * Flat diffuse texture.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class LightSource {   
+public class DiffuseTexture extends Texture {
     
-    Vector3D location;
-    Colour colour;
+    Colour pigment;
     
-    /**
-     * Obtain location of light source.
-     * 
-     * @return location of light.
-     */
-    public Vector3D getLocation() {
-        return location;
+    public DiffuseTexture(Colour pigment) {
+        this.pigment = pigment;
+    }
+
+    @Override
+    public Colour getPigment() {
+        return pigment;
     }
     
-    /**
-     * Obtain colour of light source.
-     * 
-     * @return colour
-     */
-    public Colour getColour() {
-        return colour;
-    }
 }

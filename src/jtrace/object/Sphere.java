@@ -14,35 +14,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package jtrace;
+package jtrace.object;
 
+import jtrace.Ray;
+import jtrace.SceneObject;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 /**
- * Basic point light source.
- *
+ * Basic sphere object.
+ * 
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class LightSource {   
-    
-    Vector3D location;
-    Colour colour;
-    
-    /**
-     * Obtain location of light source.
-     * 
-     * @return location of light.
-     */
-    public Vector3D getLocation() {
-        return location;
+public class Sphere extends SceneObject {
+
+    @Override
+    public double getFirstCollision(Ray ray) {
+        
+        Vector3D displacement = ray.getOrigin().subtract(getLocation());
+        
+        double a = ray.getDirection().getNormSq();
+        double b = 0.5*ray.getDirection().dotProduct(displacement);
+        double c = displacement.getNormSq();
+        
+        // Check for miss:
+        if (b*b < 4.0*a*c)
+            return Double.POSITIVE_INFINITY;
+        
+        // Determine actual intersections
+        
+        return 0.0;
     }
     
-    /**
-     * Obtain colour of light source.
-     * 
-     * @return colour
-     */
-    public Colour getColour() {
-        return colour;
-    }
 }

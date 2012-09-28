@@ -17,25 +17,67 @@
 package jtrace;
 
 /**
+ * Class of objects describing colours.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 public class Colour {
     
-    double[] rgb;
+    double r, g, b;
     
     public Colour(double r, double g, double b) {
-        rgb = new double[3];
-        rgb[0] = r;
-        rgb[1] = g;
-        rgb[2] = b;
+        this.r = r;
+        this.g = g;
+        this.b = b;
     }
     
     public int getInt() {
-        int res = (int)(rgb[0]*255) << 16;
-        res += (int)(rgb[1]*255) << 8;
-        res += (int)(rgb[2]*255);
+        int res = (int)(r*255) << 16;
+        res += (int)(g*255) << 8;
+        res += (int)(b*255);
         
         return res;
+    }
+    
+    /**
+     * Return a new colour with RGB components scaled by the given factor.
+     * 
+     * @param factor
+     * @return a new colour object
+     */
+    public Colour scale(double factor) {
+        return new Colour(r*factor, g*factor, b*factor);
+    }
+    
+    /**
+     * Return a new colour made by adding RGB components of this colour
+     * to those of the colour c.
+     * @param c colour to add
+     * @return a new colour object
+     */
+    public Colour add(Colour c) {
+        return new Colour(r+c.r, g+c.g, b+c.b);
+    }
+    
+    /**
+     * Return a new colour made by subtracting the RGB components of colour
+     * c from those of this colour.
+     * @param c colour to add
+     * @return a new colour object
+     */
+    public Colour subtract(Colour c) {
+        return new Colour(r-c.r, g-c.g, b-c.b);
+    }
+    
+    
+    /**
+     * Return a new colour made through element by element multiplication of
+     * this colour with colour c.
+     * 
+     * @param c
+     * @return a new colour object.
+     */
+    public Colour filter(Colour c) {
+        return new Colour(r*c.r, g*c.g, b*c.b);
     }
 }

@@ -17,8 +17,10 @@
 package jtrace;
 
 import java.util.List;
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 /**
+ * Abstract texture class.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
@@ -26,25 +28,43 @@ public abstract class Texture {
     
     SceneObject object;
     
-    abstract Colour getPigment();
-    abstract double getReflect();
-    abstract double getRefract();
-    abstract double getAmbient();
-    
     public void setObject(SceneObject object) {
         this.object = object;
     }
     
+    /**
+     * Obtain pigment at last ray collision location on object.
+     * 
+     * @return pigment colour.
+     */
+    public abstract Colour getPigment();
+    
+    /**
+     * Get combined colour of diffusely scattered light.
+     * 
+     * @param scene
+     * @param normalRay
+     * @return 
+     */
     public Colour getDiffuseColour(Scene scene, Ray normalRay) {
         Colour colour = new Colour(0,0,0);
         
         List<LightSource> visibleLights = scene.getVisibleLights(normalRay.origin);
         
         for (LightSource light : visibleLights) {
+
+            // Determine direction of light source
+            Vector3D lightDir = light.getLocation()
+                    .subtract(normalRay.origin).normalize();
             
+            // Projection of light source direction onto surface normal:
+            double projection = lightDir.dotProduct(normalRay.direction);
+            
+            // Scale light colour by projection and add to diffuse colour:
+            colour = colour.add(light.getColour().scale(projection));            
         }
         
-        return colour;
+        return getPigment().filter(colour);
     }
     
     /**
@@ -53,13 +73,10 @@ public abstract class Texture {
      * @return collision colour.
      */
     public Colour getCollisionColour() {
-        Colour colour = new Colour(0,0,0);
-        
         Scene scene = object.getScene();
-        Ray collidingRay = object.getCollidingRay();
-        Ray normalRay = object.getNormalRay();
+        Ray normal = object.getNormalRay();
+        Ray collider = object.getCollidingRay();
         
-        return colour;
-    };
-    
+        return getDiffuseColour(scene, normal);
+    }
 }
