@@ -46,10 +46,13 @@ public class Sphere extends SceneObject {
     @Override
     public double getFirstCollision(Ray ray) {
         
+        if (Math.abs(ray.direction.getX())<0.001 && Math.abs(ray.direction.getY())<0.001)
+            System.out.println("Should be hitting sphere now!");
+        
         Vector3D displacement = ray.getOrigin().subtract(location);
         
         double a = ray.getDirection().getNormSq();
-        double b = 0.5*ray.getDirection().dotProduct(displacement);
+        double b = 2.0*ray.getDirection().dotProduct(displacement);
         double c = displacement.getNormSq() - radius*radius;
         
         // Check for miss:

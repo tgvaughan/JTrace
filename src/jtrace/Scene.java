@@ -19,7 +19,10 @@ package jtrace;
 import jtrace.object.SceneObject;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
@@ -116,8 +119,10 @@ public class Scene {
         SceneObject nearestObject = null;
         for (SceneObject object : sceneObjects) {
             double dist = object.getFirstCollision(ray);
-            if (dist < nearestObjectDist)
+            if (dist < nearestObjectDist) {
+                nearestObject = object;
                 nearestObjectDist = dist;
+            }
         }
 
         if (nearestObject == null)
@@ -134,18 +139,30 @@ public class Scene {
      *
      * @return BufferedImage containing rendering.
      */
-    public BufferedImage render(int width, int height) {
+    public BufferedImage render(int width, int height) throws IOException {
         BufferedImage image = new BufferedImage(width, height,
                 BufferedImage.TYPE_INT_BGR);
+        
+        //DEBUG:
+        // FileWriter outputStream = new FileWriter("rays.txt");
+        // outputStream.write("x y z\n");
 
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 Ray ray = camera.getRay(width, height, x, y);
                 Colour pixelColour = traceRay(ray);
+              
+                /*
+                outputStream.write(ray.direction.getX() + " "
+                        + ray.direction.getY() + " "
+                        + ray.direction.getZ() + "\n");
+                        */
 
                 image.setRGB(x, y, pixelColour.getInt());
             }
-        }            
+        }
+        
+        //outputStream.close();
 
         return image;
     }
@@ -188,7 +205,7 @@ public class Scene {
      */
     public static void main(String[] args) throws IOException {
         Camera camera = new Camera(
-                new Vector3D(0, 0, 1),
+                new Vector3D(0, 0, 5),
                 new Vector3D(0, 0, 0),
                 Vector3D.PLUS_J,
                 1.0, 1.0);
@@ -196,12 +213,12 @@ public class Scene {
         Scene scene = new Scene();
         scene.setCamera(camera);
         
-        LightSource light = new LightSource(new Vector3D(1,1,1));
+        LightSource light = new LightSource(new Vector3D(1,1,5));
         scene.addLightSource(light);
         
         Colour green = new Colour(0,1,0);
         DiffuseTexture greenPigment = new DiffuseTexture(green);
-        Sphere sphere = new Sphere(new Vector3D(0,0,0), 0.5, greenPigment);
+        Sphere sphere = new Sphere(new Vector3D(0,0,0), 1.0, greenPigment);
         scene.addObject(sphere);
 
         BufferedImage image = scene.render(640, 480);
