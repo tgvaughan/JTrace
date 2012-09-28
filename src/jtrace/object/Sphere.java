@@ -41,13 +41,11 @@ public class Sphere extends SceneObject {
         this.location = location;
         this.radius = radius;
         this.texture = texture;
+        texture.setObject(this);
     }
 
     @Override
     public double getFirstCollision(Ray ray) {
-        
-        if (Math.abs(ray.direction.getX())<0.001 && Math.abs(ray.direction.getY())<0.001)
-            System.out.println("Should be hitting sphere now!");
         
         Vector3D displacement = ray.getOrigin().subtract(location);
         
@@ -70,6 +68,11 @@ public class Sphere extends SceneObject {
             collidingRay = ray;
             Vector3D collisionLocation = ray.direction.scalarMultiply(alphaMinus).add(ray.origin);
             Vector3D normal = collisionLocation.subtract(location).normalize();
+            
+            // Hack to avoid child rays colliding with the same surface
+            // (Need a better way of doing this.)
+            collisionLocation = collisionLocation.add(0.001, normal);
+            
             normalRay = new Ray(collisionLocation, normal);
             
             return alphaMinus;

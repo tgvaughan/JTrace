@@ -143,26 +143,14 @@ public class Scene {
         BufferedImage image = new BufferedImage(width, height,
                 BufferedImage.TYPE_INT_BGR);
         
-        //DEBUG:
-        // FileWriter outputStream = new FileWriter("rays.txt");
-        // outputStream.write("x y z\n");
-
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 Ray ray = camera.getRay(width, height, x, y);
                 Colour pixelColour = traceRay(ray);
               
-                /*
-                outputStream.write(ray.direction.getX() + " "
-                        + ray.direction.getY() + " "
-                        + ray.direction.getZ() + "\n");
-                        */
-
                 image.setRGB(x, y, pixelColour.getInt());
             }
         }
-        
-        //outputStream.close();
 
         return image;
     }
@@ -208,7 +196,7 @@ public class Scene {
                 new Vector3D(0, 0, 5),
                 new Vector3D(0, 0, 0),
                 Vector3D.PLUS_J,
-                1.0, 1.0);
+                1.0, 4.0/3.0);
 
         Scene scene = new Scene();
         scene.setCamera(camera);
@@ -221,7 +209,7 @@ public class Scene {
         Sphere sphere = new Sphere(new Vector3D(0,0,0), 1.0, greenPigment);
         scene.addObject(sphere);
 
-        BufferedImage image = scene.render(640, 480);
+        BufferedImage image = scene.render(800, 600);
 
         ImageIO.write(image, "PNG", new File("out.png"));
     }
