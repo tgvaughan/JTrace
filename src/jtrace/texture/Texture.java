@@ -14,9 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package jtrace;
+package jtrace.texture;
 
 import java.util.List;
+import jtrace.Colour;
+import jtrace.LightSource;
+import jtrace.Ray;
+import jtrace.Scene;
+import jtrace.object.SceneObject;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 /**
@@ -60,8 +65,10 @@ public abstract class Texture {
             // Projection of light source direction onto surface normal:
             double projection = lightDir.dotProduct(normalRay.direction);
             
-            // Scale light colour by projection and add to diffuse colour:
-            colour = colour.add(light.getColour().scale(projection));            
+            // Scale light colour by projection and add to diffuse colour,
+            // provided light is not obscured by present surface.
+            if (projection>0)
+                colour = colour.add(light.getColour().scale(projection));            
         }
         
         return getPigment().filter(colour);

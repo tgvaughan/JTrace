@@ -16,12 +16,15 @@
  */
 package jtrace;
 
+import jtrace.object.SceneObject;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
+import jtrace.object.Sphere;
+import jtrace.texture.DiffuseTexture;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 /**
@@ -192,6 +195,14 @@ public class Scene {
 
         Scene scene = new Scene();
         scene.setCamera(camera);
+        
+        LightSource light = new LightSource(new Vector3D(1,1,1));
+        scene.addLightSource(light);
+        
+        Colour green = new Colour(0,1,0);
+        DiffuseTexture greenPigment = new DiffuseTexture(green);
+        Sphere sphere = new Sphere(new Vector3D(0,0,0), 0.5, greenPigment);
+        scene.addObject(sphere);
 
         BufferedImage image = scene.render(640, 480);
 

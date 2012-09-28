@@ -17,7 +17,7 @@
 package jtrace.object;
 
 import jtrace.Ray;
-import jtrace.SceneObject;
+import jtrace.texture.Texture;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 /**
@@ -26,23 +26,62 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 public class Sphere extends SceneObject {
+    
+    // Radius of sphere
+    double radius;
+    
+    /**
+     * Constructor for sphere objects.
+     * 
+     * @param location
+     * @param radius
+     * @param texture 
+     */
+    public Sphere(Vector3D location, double radius, Texture texture) {
+        this.location = location;
+        this.radius = radius;
+        this.texture = texture;
+    }
 
     @Override
     public double getFirstCollision(Ray ray) {
         
-        Vector3D displacement = ray.getOrigin().subtract(getLocation());
+        Vector3D displacement = ray.getOrigin().subtract(location);
         
         double a = ray.getDirection().getNormSq();
         double b = 0.5*ray.getDirection().dotProduct(displacement);
-        double c = displacement.getNormSq();
+        double c = displacement.getNormSq() - radius*radius;
         
         // Check for miss:
         if (b*b < 4.0*a*c)
             return Double.POSITIVE_INFINITY;
         
         // Determine actual intersections
+        double alpha0 = -0.5*b/a;
+        double dalpha = 0.5*Math.sqrt(b*b-4.0*a*c)/a;
         
-        return 0.0;
+        double alphaPlus = alpha0 + dalpha;
+        double alphaMinus = alpha0 - dalpha;
+       
+        if (alphaMinus < alphaPlus && alphaMinus>0) {
+            collidingRay = ray;
+            Vector3D collisionLocation = ray.direction.scalarMultiply(alphaMinus).add(ray.origin);
+            Vector3D normal = collisionLocation.subtract(location).normalize();
+            normalRay = new Ray(collisionLocation, normal);
+            
+            return alphaMinus;
+        }
+        
+        if (alphaPlus > 0) {
+            collidingRay = ray;
+            Vector3D collisionLocation = ray.direction.scalarMultiply(alphaPlus).add(ray.origin);
+            Vector3D normal = collisionLocation.subtract(location).normalize();
+            normalRay = new Ray(collisionLocation, normal);
+            
+            return alphaPlus;
+        }
+        
+        return Double.POSITIVE_INFINITY;
     }
     
 }

@@ -75,9 +75,9 @@ public class Camera {
         double tanThetaRight = fovRight*(x/(double)width - 0.5);
         
         Vector3D raydir = new Vector3D(1.0, direction);
-        raydir.add(tanThetaUp, up);
-        raydir.add(tanThetaRight, right);
+        raydir = raydir.add(tanThetaUp, up);
+        raydir = raydir.add(tanThetaRight, right);
         
-        return new Ray(origin, raydir);
+        return new Ray(origin, raydir.normalize());
     }
 }

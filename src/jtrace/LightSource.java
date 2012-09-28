@@ -28,6 +28,16 @@ public class LightSource {
     Vector3D location;
     Colour colour;
     
+    public LightSource(Vector3D location) {
+        this.location = location;
+        this.colour = new Colour(1,1,1);
+    }
+    
+    public LightSource(Vector3D location, Colour colour) {
+        this.location= location;
+        this.colour = colour;
+    }
+    
     /**
      * Obtain location of light source.
      * 

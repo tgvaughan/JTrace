@@ -25,8 +25,8 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
  */
 public class Ray {
     
-    Vector3D origin;
-    Vector3D direction;
+    public Vector3D origin;
+    public Vector3D direction;
     
     public Ray (Vector3D origin, Vector3D direction) {
         

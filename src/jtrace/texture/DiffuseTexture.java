@@ -17,7 +17,6 @@
 package jtrace.texture;
 
 import jtrace.Colour;
-import jtrace.Texture;
 
 /**
  * Flat diffuse texture.

@@ -14,8 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package jtrace;
+package jtrace.object;
 
+import jtrace.Colour;
+import jtrace.Ray;
+import jtrace.Scene;
+import jtrace.texture.Texture;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 /**
