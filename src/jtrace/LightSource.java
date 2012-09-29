@@ -26,15 +26,18 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 public class LightSource {   
     
     Vector3D location;
+    double scaleSq;
     Colour colour;
     
-    public LightSource(Vector3D location) {
+    public LightSource(Vector3D location, double scale) {
         this.location = location;
+        this.scaleSq = scale*scale;
         this.colour = new Colour(1,1,1);
     }
     
-    public LightSource(Vector3D location, Colour colour) {
+    public LightSource(Vector3D location, double scale, Colour colour) {
         this.location= location;
+        this.scaleSq = scale*scale;
         this.colour = colour;
     }
     
@@ -54,5 +57,14 @@ public class LightSource {
      */
     public Colour getColour() {
         return colour;
+    }
+    
+    /**
+     * Obtain squared scale factor for light source.
+     * 
+     * @return square of scale factor
+     */
+    public double getScaleSq() {
+        return scaleSq;
     }
 }

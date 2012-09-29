@@ -26,14 +26,21 @@ import jtrace.Colour;
 public class DiffuseTexture extends Texture {
     
     Colour pigment;
+    double ambient;
     
-    public DiffuseTexture(Colour pigment) {
+    public DiffuseTexture(Colour pigment, double ambient) {
         this.pigment = pigment;
+        this.ambient = ambient;
     }
 
     @Override
     public Colour getPigment() {
         return pigment;
+    }
+    
+    @Override
+    public double getAmbient() {
+        return ambient;
     }
     
 }

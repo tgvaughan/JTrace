@@ -32,7 +32,6 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
  */
 public abstract class SceneObject {
     
-    Vector3D location;
     Texture texture;
     
     Ray collidingRay;
@@ -46,10 +45,6 @@ public abstract class SceneObject {
     
     public Scene getScene() {
         return scene;
-    }
-    
-    public Vector3D getLocation() {
-        return location;
     }
     
     public Ray getCollidingRay() {

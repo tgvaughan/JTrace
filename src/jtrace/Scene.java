@@ -196,20 +196,31 @@ public class Scene {
                 new Vector3D(0, 0, 5),
                 new Vector3D(0, 0, 0),
                 Vector3D.PLUS_J,
-                1.0, 4.0/3.0);
+                1.0, 1.6);
 
         Scene scene = new Scene();
         scene.setCamera(camera);
         
-        LightSource light = new LightSource(new Vector3D(1,1,5));
-        scene.addLightSource(light);
+        scene.addLightSource(new LightSource(new Vector3D(-2,2,2), 3));
         
-        Colour green = new Colour(0,1,0);
-        DiffuseTexture greenPigment = new DiffuseTexture(green);
-        Sphere sphere = new Sphere(new Vector3D(0,0,0), 1.0, greenPigment);
-        scene.addObject(sphere);
+        DiffuseTexture pigmentRed = new DiffuseTexture(new Colour(1,0,0), 0.1);
+        DiffuseTexture pigmentGreen = new DiffuseTexture(new Colour(0,1,0), 0.1);
+        DiffuseTexture pigmentBlue = new DiffuseTexture(new Colour(0,0,1), 0.1);
+        DiffuseTexture pigmentYellow = new DiffuseTexture(new Colour(1,1,0), 0.1);
+        
+        Sphere redSphere = new Sphere(new Vector3D(-1,0,0), 0.4, pigmentRed);
+        scene.addObject(redSphere);
 
-        BufferedImage image = scene.render(800, 600);
+        Sphere greenSphere = new Sphere(new Vector3D(0,-1,0), 0.4, pigmentGreen);
+        scene.addObject(greenSphere);
+
+        Sphere blueSphere = new Sphere(new Vector3D(1,0,0), 0.4, pigmentBlue);
+        scene.addObject(blueSphere);
+        
+        Sphere yellowSphere = new Sphere(new Vector3D(0,1,0), 0.4, pigmentYellow);
+        scene.addObject(yellowSphere);
+        
+        BufferedImage image = scene.render(1440, 900);
 
         ImageIO.write(image, "PNG", new File("out.png"));
     }

@@ -27,18 +27,21 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
  */
 public class Sphere extends SceneObject {
     
+    // Centre of sphere
+    Vector3D centre;
+    
     // Radius of sphere
     double radius;
     
     /**
      * Constructor for sphere objects.
      * 
-     * @param location
+     * @param centre
      * @param radius
      * @param texture 
      */
-    public Sphere(Vector3D location, double radius, Texture texture) {
-        this.location = location;
+    public Sphere(Vector3D centre, double radius, Texture texture) {
+        this.centre = centre;
         this.radius = radius;
         this.texture = texture;
         texture.setObject(this);
@@ -47,7 +50,7 @@ public class Sphere extends SceneObject {
     @Override
     public double getFirstCollision(Ray ray) {
         
-        Vector3D displacement = ray.getOrigin().subtract(location);
+        Vector3D displacement = ray.getOrigin().subtract(centre);
         
         double a = ray.getDirection().getNormSq();
         double b = 2.0*ray.getDirection().dotProduct(displacement);
@@ -67,7 +70,7 @@ public class Sphere extends SceneObject {
         if (alphaMinus < alphaPlus && alphaMinus>0) {
             collidingRay = ray;
             Vector3D collisionLocation = ray.direction.scalarMultiply(alphaMinus).add(ray.origin);
-            Vector3D normal = collisionLocation.subtract(location).normalize();
+            Vector3D normal = collisionLocation.subtract(centre).normalize();
             
             // Hack to avoid child rays colliding with the same surface
             // (Need a better way of doing this.)
@@ -81,7 +84,7 @@ public class Sphere extends SceneObject {
         if (alphaPlus > 0) {
             collidingRay = ray;
             Vector3D collisionLocation = ray.direction.scalarMultiply(alphaPlus).add(ray.origin);
-            Vector3D normal = collisionLocation.subtract(location).normalize();
+            Vector3D normal = collisionLocation.subtract(centre).normalize();
             normalRay = new Ray(collisionLocation, normal);
             
             return alphaPlus;

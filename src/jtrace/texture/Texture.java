@@ -40,9 +40,16 @@ public abstract class Texture {
     /**
      * Obtain pigment at last ray collision location on object.
      * 
-     * @return pigment colour.
+     * @return pigment colour
      */
     public abstract Colour getPigment();
+    
+    /**
+     * Obtain relative strength of ambient light at last ray collision location.
+     * 
+     * @return ambient light strength
+     */
+    public abstract double getAmbient();
     
     /**
      * Get combined colour of diffusely scattered light.
@@ -58,20 +65,34 @@ public abstract class Texture {
         
         for (LightSource light : visibleLights) {
 
-            // Determine direction of light source
+            // Determine distance to and direction of light source
             Vector3D lightDir = light.getLocation()
-                    .subtract(normalRay.origin).normalize();
+                    .subtract(normalRay.origin);
+            double distanceSq = lightDir.getNormSq();
+            lightDir = lightDir.normalize();
             
             // Projection of light source direction onto surface normal:
             double projection = lightDir.dotProduct(normalRay.direction);
             
+            // Determine intensity of illumination:
+            double intensity = projection*light.getScaleSq()/distanceSq;
+            
             // Scale light colour by projection and add to diffuse colour,
             // provided light is not obscured by present surface.
             if (projection>0)
-                colour = colour.add(light.getColour().scale(projection));            
+                colour = colour.add(light.getColour().scale(intensity));            
         }
         
         return getPigment().filter(colour);
+    }
+    
+    /**
+     * Get colour resulting from faux-ambient light.
+     * 
+     * @return colour
+     */
+    public Colour getAmbientColour() {
+        return getPigment().scale(getAmbient());
     }
     
     /**
@@ -84,6 +105,6 @@ public abstract class Texture {
         Ray normal = object.getNormalRay();
         Ray collider = object.getCollidingRay();
         
-        return getDiffuseColour(scene, normal);
+        return getDiffuseColour(scene, normal).add(getAmbientColour());
     }
 }

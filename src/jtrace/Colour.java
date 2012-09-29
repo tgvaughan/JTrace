@@ -32,9 +32,9 @@ public class Colour {
     }
     
     public int getInt() {
-        int res = (int)(r*255) << 16;
-        res += (int)(g*255) << 8;
-        res += (int)(b*255);
+        int res = (int)(Math.min(r, 1.0)*255) << 16;
+        res += (int)(Math.min(g,1.0)*255) << 8;
+        res += (int)(Math.min(b,1.0)*255);
         
         return res;
     }
