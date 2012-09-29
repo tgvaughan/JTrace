@@ -17,7 +17,7 @@
 package jtrace.object;
 
 import jtrace.Ray;
-import jtrace.texture.Texture;
+import jtrace.texture.Finish;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 /**
@@ -40,7 +40,7 @@ public class Sphere extends SceneObject {
      * @param radius
      * @param texture 
      */
-    public Sphere(Vector3D centre, double radius, Texture texture) {
+    public Sphere(Vector3D centre, double radius, Finish texture) {
         this.centre = centre;
         this.radius = radius;
         this.texture = texture;

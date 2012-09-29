@@ -17,7 +17,7 @@
 package jtrace.object;
 
 import jtrace.Ray;
-import jtrace.texture.Texture;
+import jtrace.texture.Finish;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 /**
@@ -32,7 +32,7 @@ public class Plane extends SceneObject {
     Vector3D planeNorth;
     Vector3D planeEast;
     
-    public Plane(Vector3D location, Vector3D normal, Vector3D north, Texture texture) {
+    public Plane(Vector3D location, Vector3D normal, Vector3D north, Finish texture) {
         this.planeLocation = location;
         this.planeNormal = normal;
         this.texture = texture;

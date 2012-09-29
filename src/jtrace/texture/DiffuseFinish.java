@@ -1,0 +1,103 @@
+/*
+ * Copyright (C) 2012 Tim Vaughan <tgvaughan@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package jtrace.texture;
+
+import java.util.List;
+import jtrace.Colour;
+import jtrace.LightSource;
+import jtrace.Ray;
+import jtrace.Scene;
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+
+/**
+ * Flat diffuse finish.
+ *
+ * @author Tim Vaughan <tgvaughan@gmail.com>
+ */
+public class DiffuseFinish extends Finish {
+    
+    Colour pigment;
+    double ambient;
+    
+    public DiffuseFinish(Colour pigment, double ambient) {
+        this.pigment = pigment;
+        this.ambient = ambient;
+    }
+    
+    @Override
+    public double getDiffuse() {
+        return 1.0;
+    }
+
+    @Override
+    public Colour getPigment() {
+        return pigment;
+    }
+    
+    @Override
+    public double getAmbient() {
+        return ambient;
+    }
+
+    @Override
+    public double getSpecular() {
+        return 0.0;
+    }
+
+    @Override
+    public double getSpecularTightness() {
+        return 10.0;
+    }
+    
+    /**
+     * Get combined colour of diffusely scattered light.
+     * 
+     * @param scene
+     * @param normalRay
+     * @return 
+     */
+    public Colour getDiffuseColour(Scene scene,
+            List<LightSource> visibleLights,
+            Ray normalRay) {
+        Colour colour = new Colour(0,0,0);
+        
+
+        
+        for (LightSource light : visibleLights) {
+
+            // Determine distance to and direction of light source
+            Vector3D lightDir = light.getLocation()
+                    .subtract(normalRay.origin);
+            double lightDistanceSq = lightDir.getNormSq();
+            lightDir = lightDir.normalize();
+            
+            // Projection of light source direction onto surface normal:
+            double projection = lightDir.dotProduct(normalRay.direction);
+            
+            if (projection>0.0) {
+                // Determine intensity of illumination:
+                double intensity = projection*light.getScaleSq()/lightDistanceSq;
+            
+                // Scale light colour by intensity and add to diffuse colour:
+                colour = colour.add(light.getColour().scale(intensity));      
+            }
+        }
+        
+        return getPigment().filter(colour);
+    }
+    
+}

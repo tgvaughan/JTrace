@@ -25,9 +25,9 @@ import javax.imageio.ImageIO;
 import jtrace.object.Plane;
 import jtrace.object.SceneObject;
 import jtrace.object.Sphere;
-import jtrace.texture.CheckeredTexture;
-import jtrace.texture.DiffuseTexture;
-import jtrace.texture.GlossyTexture;
+import jtrace.texture.Checker;
+import jtrace.texture.DiffuseFinish;
+import jtrace.texture.SpecularFinish;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 /**
@@ -203,10 +203,10 @@ public class Scene {
         
         scene.addLightSource(new LightSource(new Vector3D(-3,3,3), 4));
         
-        GlossyTexture glossRed = new GlossyTexture(new Colour(1,0,0), 1.0, 1.0, 100, 0.1);
-        GlossyTexture glossGreen = new GlossyTexture(new Colour(0,1,0), 1.0, 1.0, 100, 0.1);
-        GlossyTexture glossBlue = new GlossyTexture(new Colour(0,0,1), 1.0, 1.0, 100, 0.1);
-        GlossyTexture glossYellow = new GlossyTexture(new Colour(1,1,0), 1.0, 1.0, 100, 0.1);
+        SpecularFinish glossRed = new SpecularFinish(new Colour(1,0,0), 1.0, 1.0, 100, 0.1);
+        SpecularFinish glossGreen = new SpecularFinish(new Colour(0,1,0), 1.0, 1.0, 100, 0.1);
+        SpecularFinish glossBlue = new SpecularFinish(new Colour(0,0,1), 1.0, 1.0, 100, 0.1);
+        SpecularFinish glossYellow = new SpecularFinish(new Colour(1,1,0), 1.0, 1.0, 100, 0.1);
                 
         Sphere redSphere = new Sphere(new Vector3D(-1,0,0), 0.4, glossRed);
         scene.addObject(redSphere);
@@ -220,7 +220,7 @@ public class Scene {
         Sphere yellowSphere = new Sphere(new Vector3D(1,0,0), 0.4, glossYellow);
         scene.addObject(yellowSphere);
         
-        CheckeredTexture checkered = new CheckeredTexture(
+        Checker checkered = new Checker(
                 new Colour(.5,.5,.5), new Colour(1,1,1),
                 1.0, 0.05);
         

@@ -16,46 +16,21 @@
  */
 package jtrace.texture;
 
+import java.util.List;
 import jtrace.Colour;
+import jtrace.LightSource;
+import jtrace.Ray;
+import jtrace.Scene;
+import jtrace.object.SceneObject;
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 /**
- * Flat diffuse texture.
+ * Abstract class encompassing finishes to apply to objects.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class DiffuseTexture extends Texture {
+public abstract class Finish {
     
-    Colour pigment;
-    double ambient;
-    
-    public DiffuseTexture(Colour pigment, double ambient) {
-        this.pigment = pigment;
-        this.ambient = ambient;
-    }
-    
-    @Override
-    public double getDiffuse() {
-        return 1.0;
-    }
+    public abstract Colour layerFinish(SceneObject object, Colour colour);
 
-    @Override
-    public Colour getPigment() {
-        return pigment;
-    }
-    
-    @Override
-    public double getAmbient() {
-        return ambient;
-    }
-
-    @Override
-    public double getSpecular() {
-        return 0.0;
-    }
-
-    @Override
-    public double getSpecularTightness() {
-        return 10.0;
-    }
-    
 }

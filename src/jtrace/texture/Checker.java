@@ -22,43 +22,59 @@ import jtrace.Colour;
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class GlossyTexture extends Texture {
+public class Checker extends Finish {
     
-    Colour pigment;
-    double diffuse, specular, tightness, ambient;
+    Colour colourA;
+    Colour colourB;
+    double period;
     
-    public GlossyTexture(Colour pigment,
-            double diffuse, double specular, double tightness,
+    double ambient;
+    
+    public Checker (Colour colourA, Colour colourB, double period,
             double ambient) {
-        this.pigment = pigment;
-        this.diffuse = diffuse;
-        this.specular = specular;
-        this.tightness = tightness;
-        this.ambient = ambient;
+        this.colourA = colourA;
+        this.colourB = colourB;
+        this.period = period;
+        this.ambient = ambient;        
     }
-    
+
     @Override
     public Colour getPigment() {
-        return pigment;
+        double u = object.getU();
+        double v = object.getV();
+        
+        double scaledU = Math.abs(object.getU()/period)%1.0;
+        if (u<0)
+            scaledU = 1.0 - scaledU;
+        
+        double scaledV = Math.abs(object.getV()/period)%1.0;
+        if (v<0)
+            scaledV = 1.0 - scaledV;
+        
+        if ((scaledU<0.5 && scaledV<0.5) || (scaledU>0.5 && scaledV>0.5))
+            return colourA;
+        else
+            return colourB;
     }
-    
-    @Override
-    public double getDiffuse() {
-        return diffuse;
-    }
-    
-    @Override
-    public double getSpecular() {
-        return specular;
-    }
-    
-    @Override
-    public double getSpecularTightness() {
-        return tightness;
-    }
-    
+
     @Override
     public double getAmbient() {
         return ambient;
     }
+
+    @Override
+    public double getDiffuse() {
+        return 1.0;
+    }
+
+    @Override
+    public double getSpecular() {
+        return 0.0;
+    }
+
+    @Override
+    public double getSpecularTightness() {
+        return 10.0;
+    }
+    
 }

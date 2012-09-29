@@ -16,10 +16,11 @@
  */
 package jtrace.object;
 
+import java.util.List;
 import jtrace.Colour;
 import jtrace.Ray;
 import jtrace.Scene;
-import jtrace.texture.Texture;
+import jtrace.texture.Finish;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 /**
@@ -32,7 +33,7 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
  */
 public abstract class SceneObject {
     
-    Texture texture;
+    List<Finish> textures;
     
     Ray incidentRay;
     Ray normalRay;
@@ -73,7 +74,11 @@ public abstract class SceneObject {
     public abstract double getFirstCollision(Ray ray);
     
     public Colour getCollisionColour() {
-        return texture.getCollisionColour();
+        Colour colour = new Colour(0,0,0);
+        for (Finish texture : textures) {
+            colour = texture.getCollisionColour(this, colour);
+        }
+        return colour;
     }
     
     /**
