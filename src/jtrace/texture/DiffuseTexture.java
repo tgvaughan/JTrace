@@ -32,6 +32,11 @@ public class DiffuseTexture extends Texture {
         this.pigment = pigment;
         this.ambient = ambient;
     }
+    
+    @Override
+    public double getDiffuse() {
+        return 1.0;
+    }
 
     @Override
     public Colour getPigment() {
@@ -41,6 +46,16 @@ public class DiffuseTexture extends Texture {
     @Override
     public double getAmbient() {
         return ambient;
+    }
+
+    @Override
+    public double getSpecular() {
+        return 0.0;
+    }
+
+    @Override
+    public double getSpecularTightness() {
+        return 10.0;
     }
     
 }

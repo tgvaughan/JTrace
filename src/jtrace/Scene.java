@@ -27,6 +27,7 @@ import jtrace.object.SceneObject;
 import jtrace.object.Sphere;
 import jtrace.texture.CheckeredTexture;
 import jtrace.texture.DiffuseTexture;
+import jtrace.texture.GlossyTexture;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 /**
@@ -202,27 +203,25 @@ public class Scene {
         
         scene.addLightSource(new LightSource(new Vector3D(-3,3,3), 4));
         
-        DiffuseTexture mattRed = new DiffuseTexture(new Colour(1,0,0), 0.1);
-        DiffuseTexture mattGreen = new DiffuseTexture(new Colour(0,1,0), 0.1);
-        DiffuseTexture mattBlue = new DiffuseTexture(new Colour(0,0,1), 0.1);
-        DiffuseTexture mattYellow = new DiffuseTexture(new Colour(1,1,0), 0.1);
-        
-        DiffuseTexture mattWhite = new DiffuseTexture(new Colour(1,1,1), 0.05);
-        
-        Sphere redSphere = new Sphere(new Vector3D(-1,0,0), 0.4, mattRed);
+        GlossyTexture glossRed = new GlossyTexture(new Colour(1,0,0), 1.0, 1.0, 100, 0.1);
+        GlossyTexture glossGreen = new GlossyTexture(new Colour(0,1,0), 1.0, 1.0, 100, 0.1);
+        GlossyTexture glossBlue = new GlossyTexture(new Colour(0,0,1), 1.0, 1.0, 100, 0.1);
+        GlossyTexture glossYellow = new GlossyTexture(new Colour(1,1,0), 1.0, 1.0, 100, 0.1);
+                
+        Sphere redSphere = new Sphere(new Vector3D(-1,0,0), 0.4, glossRed);
         scene.addObject(redSphere);
 
-        Sphere greenSphere = new Sphere(new Vector3D(0,0,1), 0.4, mattGreen);
+        Sphere greenSphere = new Sphere(new Vector3D(0,0,1), 0.4, glossGreen);
         scene.addObject(greenSphere);
 
-        Sphere blueSphere = new Sphere(new Vector3D(0,0,-1), 0.4, mattBlue);
+        Sphere blueSphere = new Sphere(new Vector3D(0,0,-1), 0.4, glossBlue);
         scene.addObject(blueSphere);
         
-        Sphere yellowSphere = new Sphere(new Vector3D(1,0,0), 0.4, mattYellow);
+        Sphere yellowSphere = new Sphere(new Vector3D(1,0,0), 0.4, glossYellow);
         scene.addObject(yellowSphere);
         
         CheckeredTexture checkered = new CheckeredTexture(
-                new Colour(1,0.2,1), new Colour(1,1,1),
+                new Colour(.5,.5,.5), new Colour(1,1,1),
                 1.0, 0.05);
         
         Plane plane = new Plane(new Vector3D(0,-0.4,0),

@@ -44,12 +44,37 @@ public abstract class Texture {
      */
     public abstract Colour getPigment();
     
+
     /**
-     * Obtain relative strength of ambient light at last ray collision location.
+     * Obtain relative intensity of diffuse reflection.
+     * @return 
+     */
+    public abstract double getDiffuse();
+    
+    /**
+     * Obtain relative intensity of specular reflection.
+     * 
+     * @return specular reflection intensity
+     */
+    public abstract double getSpecular();
+    
+    /**
+     * Retrieve tightness of specular highlights. Higher numbers result
+     * in smaller highlights.
+     * 
+     * @return tightness
+     */
+    public abstract double getSpecularTightness();
+    
+    
+    /**
+     * Obtain relative intensity of ambient light.
      * 
      * @return ambient light strength
      */
-    public abstract double getAmbient();
+    public double getAmbient() {
+        return 0.0;
+    }
     
     /**
      * Get combined colour of diffusely scattered light.
@@ -58,32 +83,75 @@ public abstract class Texture {
      * @param normalRay
      * @return 
      */
-    public Colour getDiffuseColour(Scene scene, Ray normalRay) {
+    public Colour getDiffuseColour(Scene scene,
+            List<LightSource> visibleLights,
+            Ray normalRay) {
         Colour colour = new Colour(0,0,0);
         
-        List<LightSource> visibleLights = scene.getVisibleLights(normalRay.origin);
+
         
         for (LightSource light : visibleLights) {
 
             // Determine distance to and direction of light source
             Vector3D lightDir = light.getLocation()
                     .subtract(normalRay.origin);
-            double distanceSq = lightDir.getNormSq();
+            double lightDistanceSq = lightDir.getNormSq();
             lightDir = lightDir.normalize();
             
             // Projection of light source direction onto surface normal:
             double projection = lightDir.dotProduct(normalRay.direction);
             
-            // Determine intensity of illumination:
-            double intensity = projection*light.getScaleSq()/distanceSq;
+            if (projection>0.0) {
+                // Determine intensity of illumination:
+                double intensity = projection*light.getScaleSq()/lightDistanceSq;
             
-            // Scale light colour by projection and add to diffuse colour,
-            // provided light is not obscured by present surface.
-            if (projection>0)
-                colour = colour.add(light.getColour().scale(intensity));            
+                // Scale light colour by intensity and add to diffuse colour:
+                colour = colour.add(light.getColour().scale(intensity));      
+            }
         }
         
         return getPigment().filter(colour);
+    }
+
+    /**
+     * Get colour resulting from specular reflection.
+     * 
+     * @param scene
+     * @param normalRay
+     * @param incidentRay
+     * @return 
+     */
+    public Colour getSpecularColour(Scene scene,
+            List<LightSource> visibleLights,
+            Ray normalRay, Ray incidentRay) {
+        Colour colour = new Colour(0,0,0);
+        
+        // Calculate direction of reflected ray:
+        Vector3D reflected = incidentRay.direction
+                .add(-2.0*incidentRay.direction
+                .dotProduct(normalRay.direction), normalRay.direction);
+        
+        for (LightSource light : visibleLights) {
+            
+            // Determine distance and direction to light:
+            Vector3D lightDir = light.getLocation().subtract(normalRay.origin);
+            double lightDistanceSq = lightDir.getNormSq();
+            lightDir = lightDir.normalize();
+            
+            // Projection of light direction onto reflected ray:
+            double projection = lightDir.dotProduct(reflected);
+            
+            if (projection>0) {
+                // Intensity of specular highlighting:
+                double intensity = Math.pow(projection,getSpecularTightness())
+                        *light.getScaleSq()/lightDistanceSq;
+                
+                // Scale light colour by intensity and add to specular colour:
+                colour = colour.add(light.getColour().scale(intensity));
+            }
+        }
+        
+        return colour;
     }
     
     /**
@@ -102,9 +170,23 @@ public abstract class Texture {
      */
     public Colour getCollisionColour() {
         Scene scene = object.getScene();
-        Ray normal = object.getNormalRay();
-        Ray collider = object.getCollidingRay();
+        Ray normalRay = object.getNormalRay();
+        Ray incidentRay = object.incidentRay();
         
-        return getDiffuseColour(scene, normal).add(getAmbientColour());
+        List<LightSource> visibleLights = scene.getVisibleLights(normalRay.origin);
+        Colour colour = new Colour(0,0,0);
+        
+        if (getDiffuse()>0.0)
+            colour = colour.add(getDiffuseColour(scene,
+                    visibleLights, normalRay).scale(getDiffuse()));
+        
+        if (getSpecular()>0.0)
+            colour = colour.add(getSpecularColour(scene,
+                    visibleLights, normalRay, incidentRay).scale(getSpecular()));
+        
+        if (getAmbient()>0.0)
+            colour = colour.add(getAmbientColour().scale(getAmbient()));
+        
+        return colour;
     }
 }

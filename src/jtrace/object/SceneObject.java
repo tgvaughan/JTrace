@@ -34,7 +34,7 @@ public abstract class SceneObject {
     
     Texture texture;
     
-    Ray collidingRay;
+    Ray incidentRay;
     Ray normalRay;
     
     // The small value collision locations are moved out from their surfaces
@@ -54,8 +54,8 @@ public abstract class SceneObject {
         return scene;
     }
     
-    public Ray getCollidingRay() {
-        return collidingRay;
+    public Ray incidentRay() {
+        return incidentRay;
     }
     
     public Ray getNormalRay() {

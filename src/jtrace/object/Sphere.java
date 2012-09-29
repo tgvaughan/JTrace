@@ -68,7 +68,7 @@ public class Sphere extends SceneObject {
         double alphaMinus = alpha0 - dalpha;
        
         if (alphaMinus < alphaPlus && alphaMinus>0) {
-            collidingRay = ray;
+            incidentRay = ray;
             Vector3D collisionLocation = ray.direction.scalarMultiply(alphaMinus).add(ray.origin);
             Vector3D normal = collisionLocation.subtract(centre).normalize();
             
@@ -82,7 +82,7 @@ public class Sphere extends SceneObject {
         }
         
         if (alphaPlus > 0) {
-            collidingRay = ray;
+            incidentRay = ray;
             Vector3D collisionLocation = ray.direction.scalarMultiply(alphaPlus).add(ray.origin);
             Vector3D normal = collisionLocation.subtract(centre).normalize();
             normalRay = new Ray(collisionLocation, normal);
