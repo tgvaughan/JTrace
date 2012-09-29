@@ -74,7 +74,7 @@ public class Sphere extends SceneObject {
             
             // Hack to avoid child rays colliding with the same surface
             // (Need a better way of doing this.)
-            collisionLocation = collisionLocation.add(0.001, normal);
+            collisionLocation = collisionLocation.add(epsilon, normal);
             
             normalRay = new Ray(collisionLocation, normal);
             
@@ -91,6 +91,16 @@ public class Sphere extends SceneObject {
         }
         
         return Double.POSITIVE_INFINITY;
+    }
+
+    @Override
+    public double getU() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public double getV() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
 }

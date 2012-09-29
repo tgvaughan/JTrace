@@ -16,17 +16,16 @@
  */
 package jtrace;
 
-import jtrace.object.SceneObject;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
+import jtrace.object.Plane;
+import jtrace.object.SceneObject;
 import jtrace.object.Sphere;
+import jtrace.texture.CheckeredTexture;
 import jtrace.texture.DiffuseTexture;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
@@ -193,7 +192,7 @@ public class Scene {
      */
     public static void main(String[] args) throws IOException {
         Camera camera = new Camera(
-                new Vector3D(0, 0, 5),
+                new Vector3D(-1, 2, 5),
                 new Vector3D(0, 0, 0),
                 Vector3D.PLUS_J,
                 1.0, 1.6);
@@ -201,27 +200,37 @@ public class Scene {
         Scene scene = new Scene();
         scene.setCamera(camera);
         
-        scene.addLightSource(new LightSource(new Vector3D(-2,2,2), 3));
+        scene.addLightSource(new LightSource(new Vector3D(-3,3,3), 4));
         
-        DiffuseTexture pigmentRed = new DiffuseTexture(new Colour(1,0,0), 0.1);
-        DiffuseTexture pigmentGreen = new DiffuseTexture(new Colour(0,1,0), 0.1);
-        DiffuseTexture pigmentBlue = new DiffuseTexture(new Colour(0,0,1), 0.1);
-        DiffuseTexture pigmentYellow = new DiffuseTexture(new Colour(1,1,0), 0.1);
+        DiffuseTexture mattRed = new DiffuseTexture(new Colour(1,0,0), 0.1);
+        DiffuseTexture mattGreen = new DiffuseTexture(new Colour(0,1,0), 0.1);
+        DiffuseTexture mattBlue = new DiffuseTexture(new Colour(0,0,1), 0.1);
+        DiffuseTexture mattYellow = new DiffuseTexture(new Colour(1,1,0), 0.1);
         
-        Sphere redSphere = new Sphere(new Vector3D(-1,0,0), 0.4, pigmentRed);
+        DiffuseTexture mattWhite = new DiffuseTexture(new Colour(1,1,1), 0.05);
+        
+        Sphere redSphere = new Sphere(new Vector3D(-1,0,0), 0.4, mattRed);
         scene.addObject(redSphere);
 
-        Sphere greenSphere = new Sphere(new Vector3D(0,-1,0), 0.4, pigmentGreen);
+        Sphere greenSphere = new Sphere(new Vector3D(0,0,1), 0.4, mattGreen);
         scene.addObject(greenSphere);
 
-        Sphere blueSphere = new Sphere(new Vector3D(1,0,0), 0.4, pigmentBlue);
+        Sphere blueSphere = new Sphere(new Vector3D(0,0,-1), 0.4, mattBlue);
         scene.addObject(blueSphere);
         
-        Sphere yellowSphere = new Sphere(new Vector3D(0,1,0), 0.4, pigmentYellow);
+        Sphere yellowSphere = new Sphere(new Vector3D(1,0,0), 0.4, mattYellow);
         scene.addObject(yellowSphere);
         
+        CheckeredTexture checkered = new CheckeredTexture(
+                new Colour(1,0.2,1), new Colour(1,1,1),
+                1.0, 0.05);
+        
+        Plane plane = new Plane(new Vector3D(0,-0.4,0),
+                Vector3D.PLUS_J, Vector3D.PLUS_K,
+                checkered);
+        scene.addObject(plane);
+        
         BufferedImage image = scene.render(1440, 900);
-
         ImageIO.write(image, "PNG", new File("out.png"));
     }
 }

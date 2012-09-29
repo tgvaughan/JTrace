@@ -37,6 +37,13 @@ public abstract class SceneObject {
     Ray collidingRay;
     Ray normalRay;
     
+    // The small value collision locations are moved out from their surfaces
+    // by to prevent artifacts:
+    static double epsilon = 1e-5;
+    
+    // UV coordinates of collision point.
+    double u, v;
+    
     Scene scene;
     
     public void setScene(Scene scene) {
@@ -68,5 +75,19 @@ public abstract class SceneObject {
     public Colour getCollisionColour() {
         return texture.getCollisionColour();
     }
+    
+    /**
+     * Get u component for texture mapping.
+     * 
+     * @return u coordinate
+     */
+    public abstract double getU();
+    
+    /**
+     * Get v component for texture mapping.
+     * 
+     * @return v coordinate
+     */
+    public abstract double getV();
     
 }
