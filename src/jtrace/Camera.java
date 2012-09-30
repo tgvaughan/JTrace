@@ -46,15 +46,16 @@ public class Camera {
         
         this.location = location;
         
+        // Ensure up vector is normalized:
+        up = up.normalize();
+        
         // Obtain direction vector from pointAt location:
         this.direction = pointAt.subtract(location).normalize();
         
-        // Select component of up orthogonal to direction and normalize:
-        this.up = direction.crossProduct(direction.crossProduct(up)).normalize();
+        // Use approximate up vector to determine true up and right vectors:
+        this.right = direction.crossProduct(up).normalize();
+        this.up = this.right.crossProduct(direction);
         
-        // Define right as vector orthogonal to direction and up:
-        this.right = direction.crossProduct(up);
-
         this.fovUp = fovUp;
         this.fovRight = fovRight;
     }
@@ -70,14 +71,17 @@ public class Camera {
      */
     public Ray getRay(int width, int height, int x, int y) {
 
-        Vector3D origin = location;
-        double tanThetaUp = fovUp*(y/(double)height - 0.5);
+        // Determine angles in each direction.  Note the negative
+        // in the expression for the vertical angle - this flips
+        // the image in that direction to account for the matrix
+        // coordinate scheme used in images.
+        double tanThetaUp = -fovUp*(y/(double)height - 0.5);
         double tanThetaRight = fovRight*(x/(double)width - 0.5);
         
         Vector3D raydir = new Vector3D(1.0, direction);
         raydir = raydir.add(tanThetaUp, up);
         raydir = raydir.add(tanThetaRight, right);
         
-        return new Ray(origin, raydir.normalize());
+        return new Ray(location, raydir.normalize());
     }
 }

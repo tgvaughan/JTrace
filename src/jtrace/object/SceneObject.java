@@ -45,6 +45,7 @@ public abstract class SceneObject {
     // Details of last collision:
     Ray incidentRay;
     Ray normalRay;
+    Ray reflectedRay;
     
     // The small value collision locations are moved out from their surfaces
     // by to prevent artifacts:
@@ -80,6 +81,27 @@ public abstract class SceneObject {
     }
     
     /**
+     * Retrieve ray reflected from point of last collision.
+     * 
+     * @return reflected ray
+     */
+    public Ray getReflectedRay() {
+        
+        // Return existing value if it's already been calculated:
+        if (reflectedRay != null)
+            return reflectedRay;
+        
+        Vector3D reflectedOrigin = normalRay.origin;
+        Vector3D reflectedDir = incidentRay.direction
+                .add(-2.0*incidentRay.direction
+                .dotProduct(normalRay.direction), normalRay.direction);
+        
+        reflectedRay = new Ray(reflectedOrigin, reflectedDir);
+        
+        return reflectedRay;
+    }
+    
+    /**
      * Responsible for calculating first collision of ray with object,
      * returning the distance to this point from the origin of the ray.
      * Records the colliding and normal rays for future interrogation.
@@ -91,9 +113,9 @@ public abstract class SceneObject {
     
     public Colour getCollisionColour() {
         
-        // Clear light sources visible from last collision
-        // (Allows for caching.)
+        // Clear calculated collision information (allows for caching):
         visibleLights = null;
+        reflectedRay = null;
         
         Colour colour = new Colour(0,0,0);
         for (Texture texture : textures) {
@@ -124,7 +146,7 @@ public abstract class SceneObject {
      */
     public List<LightSource> getVisibleLights() {
         
-        // Return existing list if it's already been calculated
+        // Return existing list if it's already been calculated:
         if (visibleLights != null)
             return visibleLights;
         

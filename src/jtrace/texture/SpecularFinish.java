@@ -52,11 +52,7 @@ public class SpecularFinish extends Finish {
         
         Ray incidentRay = object.getIncidentRay();
         Ray normalRay = object.getNormalRay();
-        
-        // Calculate direction of reflected ray:
-        Vector3D reflected = incidentRay.direction
-                .add(-2.0*incidentRay.direction
-                .dotProduct(normalRay.direction), normalRay.direction);
+        Ray reflectedRay = object.getReflectedRay();
         
         for (LightSource light : object.getVisibleLights()) {
             
@@ -66,7 +62,7 @@ public class SpecularFinish extends Finish {
             lightDir = lightDir.normalize();
             
             // Projection of light direction onto reflected ray:
-            double projection = lightDir.dotProduct(reflected);
+            double projection = lightDir.dotProduct(reflectedRay.direction);
             
             if (projection>0) {
                 // Intensity of specular highlighting:
