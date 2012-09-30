@@ -56,7 +56,7 @@ public class FlatTexture extends Texture {
     public Colour layerTextureColour(SceneObject object, Colour colour) {
         Colour pigmentColour = pigment.getPigment(object);
         for (Finish finish : finishes)
-            colour.add(finish.layerFinish(object, pigmentColour, colour));
+            colour = finish.layerFinish(object, pigmentColour, colour);
         
         return colour;
     }

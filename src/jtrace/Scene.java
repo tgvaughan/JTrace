@@ -17,21 +17,10 @@
 package jtrace;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.imageio.ImageIO;
-import jtrace.object.Plane;
 import jtrace.object.SceneObject;
-import jtrace.object.Sphere;
-import jtrace.texture.AmbientFinish;
-import jtrace.texture.CheckeredPigment;
-import jtrace.texture.DiffuseFinish;
-import jtrace.texture.FlatTexture;
-import jtrace.texture.SolidPigment;
-import jtrace.texture.Texture;
-import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 /**
  * Describes a scene to trace rays through.
@@ -142,7 +131,7 @@ public class Scene {
      *
      * @return BufferedImage containing rendering.
      */
-    public BufferedImage render(int width, int height) throws IOException {
+    public BufferedImage render(int width, int height) {
         BufferedImage image = new BufferedImage(width, height,
                 BufferedImage.TYPE_INT_BGR);
         
@@ -157,69 +146,5 @@ public class Scene {
 
         return image;
     }
-    
 
-
-    /**
-     * Main method for debugging.
-     *
-     * @param args
-     */
-    public static void main(String[] args) throws IOException {
-        Camera camera = new Camera(
-                new Vector3D(-1, 2, 5),
-                new Vector3D(0, 0, 0),
-                Vector3D.PLUS_J,
-                1.0, 1.6);
-
-        Scene scene = new Scene();
-        scene.setCamera(camera);
-        
-        scene.addLightSource(new LightSource(new Vector3D(-3,3,3), 4));
-        
-        FlatTexture glossRed = (new FlatTexture(new SolidPigment(new Colour(1,0,0))))
-                .addFinish(new DiffuseFinish(1.0))
-                .addFinish(new AmbientFinish(0.1));
-        
-        FlatTexture glossGreen = (new FlatTexture(new SolidPigment(new Colour(0,1,0))))
-                .addFinish(new DiffuseFinish(1.0))
-                .addFinish(new AmbientFinish(0.1));
-                
-        FlatTexture glossBlue = (new FlatTexture(new SolidPigment(new Colour(0,0,1))))
-                .addFinish(new DiffuseFinish(1.0))
-                .addFinish(new AmbientFinish(0.1));
-                        
-        FlatTexture glossYellow = (new FlatTexture(new SolidPigment(new Colour(1,1,0))))
-                .addFinish(new DiffuseFinish(1.0))
-                .addFinish(new AmbientFinish(0.1));
-        
-        Sphere redSphere = new Sphere(new Vector3D(-1,0,0), 0.4);
-        redSphere.addTexture(glossRed);
-        scene.addObject(redSphere);
-
-        Sphere greenSphere = new Sphere(new Vector3D(0,0,1), 0.4);
-        greenSphere.addTexture(glossGreen);
-        scene.addObject(greenSphere);
-
-        Sphere blueSphere = new Sphere(new Vector3D(0,0,-1), 0.4);
-        blueSphere.addTexture(glossBlue);
-        scene.addObject(blueSphere);
-        
-        Sphere yellowSphere = new Sphere(new Vector3D(1,0,0), 0.4);
-        yellowSphere.addTexture(glossYellow);
-        scene.addObject(yellowSphere);
-        
-        FlatTexture floorTexture = new FlatTexture(new CheckeredPigment(
-                new Colour(.5,.5,.5), new Colour(1,1,1), 1));
-        floorTexture.addFinish(new DiffuseFinish(1.0));
-        floorTexture.addFinish(new AmbientFinish(0.05));
-        
-        Plane plane = new Plane(new Vector3D(0,-0.4,0),
-                Vector3D.PLUS_J, Vector3D.PLUS_K);
-        plane.addTexture(floorTexture);
-        scene.addObject(plane);
-        
-        BufferedImage image = scene.render(1440, 900);
-        ImageIO.write(image, "PNG", new File("out.png"));
-    }
 }
