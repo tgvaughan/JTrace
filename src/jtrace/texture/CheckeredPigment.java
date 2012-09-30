@@ -17,29 +17,38 @@
 package jtrace.texture;
 
 import jtrace.Colour;
+import jtrace.object.SceneObject;
 
 /**
+ * A checkered two-coloured pigment.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class Checker extends Finish {
+public class CheckeredPigment extends Pigment {
     
     Colour colourA;
     Colour colourB;
     double period;
     
-    double ambient;
-    
-    public Checker (Colour colourA, Colour colourB, double period,
-            double ambient) {
+    /**
+     * Create a pigment using squares having alternate colours
+     * of colourA and colourB. The size of the squares are fixed
+     * by the period parameter, which specifies the u or v distance
+     * over which the pattern repeats.
+     * 
+     * @param colourA
+     * @param colourB
+     * @param period 
+     */
+    public CheckeredPigment (Colour colourA, Colour colourB, double period) {
         this.colourA = colourA;
         this.colourB = colourB;
         this.period = period;
-        this.ambient = ambient;        
     }
 
     @Override
-    public Colour getPigment() {
+    public Colour getPigment(SceneObject object) {
+        
         double u = object.getU();
         double v = object.getV();
         
@@ -55,26 +64,6 @@ public class Checker extends Finish {
             return colourA;
         else
             return colourB;
-    }
-
-    @Override
-    public double getAmbient() {
-        return ambient;
-    }
-
-    @Override
-    public double getDiffuse() {
-        return 1.0;
-    }
-
-    @Override
-    public double getSpecular() {
-        return 0.0;
-    }
-
-    @Override
-    public double getSpecularTightness() {
-        return 10.0;
     }
     
 }

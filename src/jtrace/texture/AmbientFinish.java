@@ -17,26 +17,29 @@
 package jtrace.texture;
 
 import jtrace.Colour;
+import jtrace.object.SceneObject;
 
 /**
+ * Finish to simulate ambient illumination of object.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class AmbientFinish {
+public class AmbientFinish extends Finish {
     
     double ambient;
     
-    public AmbientFinish(double ambient) {
-        this.ambient = ambient;
-    }
-     
     /**
-     * Get colour resulting from faux-ambient light.
+     * Create ambient finish.
      * 
-     * @return colour
+     * @param ambientStrength Strength of ambient finish. 
      */
-    public Colour getAmbientColour() {
-        return getPigment().scale(ambient);
+    public AmbientFinish(double ambientStrength) {
+        this.ambient = ambientStrength;
+    }
+
+    @Override
+    public Colour layerFinish(SceneObject object, Colour pigmentColour, Colour colour) {
+        return colour.add(pigmentColour.scale(ambient));
     }
     
 }

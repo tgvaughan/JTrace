@@ -16,13 +16,8 @@
  */
 package jtrace.texture;
 
-import java.util.List;
 import jtrace.Colour;
-import jtrace.LightSource;
-import jtrace.Ray;
-import jtrace.Scene;
 import jtrace.object.SceneObject;
-import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 /**
  * Abstract class encompassing finishes to apply to objects.
@@ -31,6 +26,16 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
  */
 public abstract class Finish {
     
-    public abstract Colour layerFinish(SceneObject object, Colour colour);
+    /**
+     * Incorporate colour due to finish into the texture colour, given
+     * the provided pigment colour at the most recent collision point.
+     * 
+     * @param object Object on which texture is to be applied.
+     * @param pigmentColour Colour of pigment
+     * @param colour Colour resulting from previous finish applications
+     * @return New colour.
+     */
+    public abstract Colour layerFinish(SceneObject object,
+            Colour pigmentColour, Colour colour);
 
 }

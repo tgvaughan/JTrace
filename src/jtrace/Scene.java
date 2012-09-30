@@ -25,9 +25,12 @@ import javax.imageio.ImageIO;
 import jtrace.object.Plane;
 import jtrace.object.SceneObject;
 import jtrace.object.Sphere;
-import jtrace.texture.Checker;
+import jtrace.texture.AmbientFinish;
+import jtrace.texture.CheckeredPigment;
 import jtrace.texture.DiffuseFinish;
-import jtrace.texture.SpecularFinish;
+import jtrace.texture.FlatTexture;
+import jtrace.texture.SolidPigment;
+import jtrace.texture.Texture;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 /**
@@ -155,36 +158,7 @@ public class Scene {
         return image;
     }
     
-    /**
-     * Retrieve list of light source visible from location of last
-     * collision.
-     * 
-     * @return List of visible light sources.
-     */
-    public List<LightSource> getVisibleLights(Vector3D location) {
-        
-        List<LightSource> visibleLights = new ArrayList<LightSource>();
-        
-        for (LightSource light : getLightSources()) {
-            
-            Vector3D dirToLight = light.getLocation().subtract(location).normalize();
-            Ray rayToLight = new Ray(location, dirToLight);
-            
-            boolean occluded = false;
-            
-            for (SceneObject object : getSceneObjects()) {
-                if (object.getFirstCollision(rayToLight)<Double.POSITIVE_INFINITY) {
-                    occluded = true;
-                    break;
-                }
-            }
-            
-            if (!occluded)
-                visibleLights.add(light);
-        }
-        
-        return visibleLights;
-    }
+
 
     /**
      * Main method for debugging.
@@ -203,30 +177,46 @@ public class Scene {
         
         scene.addLightSource(new LightSource(new Vector3D(-3,3,3), 4));
         
-        SpecularFinish glossRed = new SpecularFinish(new Colour(1,0,0), 1.0, 1.0, 100, 0.1);
-        SpecularFinish glossGreen = new SpecularFinish(new Colour(0,1,0), 1.0, 1.0, 100, 0.1);
-        SpecularFinish glossBlue = new SpecularFinish(new Colour(0,0,1), 1.0, 1.0, 100, 0.1);
-        SpecularFinish glossYellow = new SpecularFinish(new Colour(1,1,0), 1.0, 1.0, 100, 0.1);
+        FlatTexture glossRed = (new FlatTexture(new SolidPigment(new Colour(1,0,0))))
+                .addFinish(new DiffuseFinish(1.0))
+                .addFinish(new AmbientFinish(0.1));
+        
+        FlatTexture glossGreen = (new FlatTexture(new SolidPigment(new Colour(0,1,0))))
+                .addFinish(new DiffuseFinish(1.0))
+                .addFinish(new AmbientFinish(0.1));
                 
-        Sphere redSphere = new Sphere(new Vector3D(-1,0,0), 0.4, glossRed);
+        FlatTexture glossBlue = (new FlatTexture(new SolidPigment(new Colour(0,0,1))))
+                .addFinish(new DiffuseFinish(1.0))
+                .addFinish(new AmbientFinish(0.1));
+                        
+        FlatTexture glossYellow = (new FlatTexture(new SolidPigment(new Colour(1,1,0))))
+                .addFinish(new DiffuseFinish(1.0))
+                .addFinish(new AmbientFinish(0.1));
+        
+        Sphere redSphere = new Sphere(new Vector3D(-1,0,0), 0.4);
+        redSphere.addTexture(glossRed);
         scene.addObject(redSphere);
 
-        Sphere greenSphere = new Sphere(new Vector3D(0,0,1), 0.4, glossGreen);
+        Sphere greenSphere = new Sphere(new Vector3D(0,0,1), 0.4);
+        greenSphere.addTexture(glossGreen);
         scene.addObject(greenSphere);
 
-        Sphere blueSphere = new Sphere(new Vector3D(0,0,-1), 0.4, glossBlue);
+        Sphere blueSphere = new Sphere(new Vector3D(0,0,-1), 0.4);
+        blueSphere.addTexture(glossBlue);
         scene.addObject(blueSphere);
         
-        Sphere yellowSphere = new Sphere(new Vector3D(1,0,0), 0.4, glossYellow);
+        Sphere yellowSphere = new Sphere(new Vector3D(1,0,0), 0.4);
+        yellowSphere.addTexture(glossYellow);
         scene.addObject(yellowSphere);
         
-        Checker checkered = new Checker(
-                new Colour(.5,.5,.5), new Colour(1,1,1),
-                1.0, 0.05);
+        FlatTexture floorTexture = new FlatTexture(new CheckeredPigment(
+                new Colour(.5,.5,.5), new Colour(1,1,1), 1));
+        floorTexture.addFinish(new DiffuseFinish(1.0));
+        floorTexture.addFinish(new AmbientFinish(0.05));
         
         Plane plane = new Plane(new Vector3D(0,-0.4,0),
-                Vector3D.PLUS_J, Vector3D.PLUS_K,
-                checkered);
+                Vector3D.PLUS_J, Vector3D.PLUS_K);
+        plane.addTexture(floorTexture);
         scene.addObject(plane);
         
         BufferedImage image = scene.render(1440, 900);

@@ -16,11 +16,14 @@
  */
 package jtrace.object;
 
+import java.util.ArrayList;
 import java.util.List;
 import jtrace.Colour;
+import jtrace.LightSource;
 import jtrace.Ray;
 import jtrace.Scene;
 import jtrace.texture.Finish;
+import jtrace.texture.Texture;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 /**
@@ -33,8 +36,13 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
  */
 public abstract class SceneObject {
     
-    List<Finish> textures;
+    // Scene that object resides in:
+    Scene scene;
     
+    // Textures to apply to object:
+    List<Texture> textures;
+    
+    // Details of last collision:
     Ray incidentRay;
     Ray normalRay;
     
@@ -45,7 +53,8 @@ public abstract class SceneObject {
     // UV coordinates of collision point.
     double u, v;
     
-    Scene scene;
+    // Light sources visible from last collision point:
+    List<LightSource> visibleLights;
     
     public void setScene(Scene scene) {
         this.scene = scene;
@@ -55,7 +64,14 @@ public abstract class SceneObject {
         return scene;
     }
     
-    public Ray incidentRay() {
+    public void addTexture(Texture texture) {
+        if (textures == null)
+            textures = new ArrayList<Texture>();
+        
+        textures.add(texture);
+    }
+    
+    public Ray getIncidentRay() {
         return incidentRay;
     }
     
@@ -74,9 +90,14 @@ public abstract class SceneObject {
     public abstract double getFirstCollision(Ray ray);
     
     public Colour getCollisionColour() {
+        
+        // Clear light sources visible from last collision
+        // (Allows for caching.)
+        visibleLights = null;
+        
         Colour colour = new Colour(0,0,0);
-        for (Finish texture : textures) {
-            colour = texture.getCollisionColour(this, colour);
+        for (Texture texture : textures) {
+            colour = texture.layerTextureColour(this, colour);
         }
         return colour;
     }
@@ -94,5 +115,41 @@ public abstract class SceneObject {
      * @return v coordinate
      */
     public abstract double getV();
+    
+    /**
+     * Retrieve list of light source visible from location of last
+     * collision.
+     * 
+     * @return List of visible light sources.
+     */
+    public List<LightSource> getVisibleLights() {
+        
+        // Return existing list if it's already been calculated
+        if (visibleLights != null)
+            return visibleLights;
+        
+        visibleLights = new ArrayList<LightSource>();
+        Vector3D location = normalRay.origin;
+        
+        for (LightSource light : scene.getLightSources()) {
+            
+            Vector3D dirToLight = light.getLocation().subtract(location).normalize();
+            Ray rayToLight = new Ray(location, dirToLight);
+            
+            boolean occluded = false;
+            
+            for (SceneObject object : scene.getSceneObjects()) {
+                if (object.getFirstCollision(rayToLight)<Double.POSITIVE_INFINITY) {
+                    occluded = true;
+                    break;
+                }
+            }
+            
+            if (!occluded)
+                visibleLights.add(light);
+        }
+        
+        return visibleLights;
+    }
     
 }

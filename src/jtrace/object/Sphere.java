@@ -40,11 +40,9 @@ public class Sphere extends SceneObject {
      * @param radius
      * @param texture 
      */
-    public Sphere(Vector3D centre, double radius, Finish texture) {
+    public Sphere(Vector3D centre, double radius) {
         this.centre = centre;
         this.radius = radius;
-        this.texture = texture;
-        texture.setObject(this);
     }
 
     @Override

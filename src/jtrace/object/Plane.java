@@ -32,11 +32,9 @@ public class Plane extends SceneObject {
     Vector3D planeNorth;
     Vector3D planeEast;
     
-    public Plane(Vector3D location, Vector3D normal, Vector3D north, Finish texture) {
+    public Plane(Vector3D location, Vector3D normal, Vector3D north) {
         this.planeLocation = location;
         this.planeNormal = normal;
-        this.texture = texture;
-        texture.setObject(this);
         
         this.planeNorth = normal.crossProduct(north.crossProduct(normal)).normalize();
         this.planeEast = north.crossProduct(normal);

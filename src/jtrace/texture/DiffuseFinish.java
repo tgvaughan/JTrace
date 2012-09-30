@@ -21,63 +21,35 @@ import jtrace.Colour;
 import jtrace.LightSource;
 import jtrace.Ray;
 import jtrace.Scene;
+import jtrace.object.SceneObject;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 /**
- * Flat diffuse finish.
+ * Finish to simulate diffuse illumination of object.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 public class DiffuseFinish extends Finish {
     
-    Colour pigment;
-    double ambient;
-    
-    public DiffuseFinish(Colour pigment, double ambient) {
-        this.pigment = pigment;
-        this.ambient = ambient;
-    }
-    
-    @Override
-    public double getDiffuse() {
-        return 1.0;
-    }
-
-    @Override
-    public Colour getPigment() {
-        return pigment;
-    }
-    
-    @Override
-    public double getAmbient() {
-        return ambient;
-    }
-
-    @Override
-    public double getSpecular() {
-        return 0.0;
-    }
-
-    @Override
-    public double getSpecularTightness() {
-        return 10.0;
-    }
+    double diffuse;
     
     /**
-     * Get combined colour of diffusely scattered light.
+     * Create diffuse finish.
      * 
-     * @param scene
-     * @param normalRay
-     * @return 
+     * @param diffuseStrength Strength of diffuse illumination. 
      */
-    public Colour getDiffuseColour(Scene scene,
-            List<LightSource> visibleLights,
-            Ray normalRay) {
-        Colour colour = new Colour(0,0,0);
-        
+    public DiffuseFinish(double diffuseStrength) {
+        this.diffuse = diffuseStrength;
+    }
 
+    @Override
+    public Colour layerFinish(SceneObject object, Colour pigmentColour, Colour colour) {
         
-        for (LightSource light : visibleLights) {
+        Colour diffuseColour = new Colour(0,0,0);
+        
+        Ray normalRay = object.getNormalRay();
+        
+        for (LightSource light : object.getVisibleLights()) {
 
             // Determine distance to and direction of light source
             Vector3D lightDir = light.getLocation()
@@ -93,11 +65,11 @@ public class DiffuseFinish extends Finish {
                 double intensity = projection*light.getScaleSq()/lightDistanceSq;
             
                 // Scale light colour by intensity and add to diffuse colour:
-                colour = colour.add(light.getColour().scale(intensity));      
+                diffuseColour = diffuseColour
+                        .add(light.getColour().scale(intensity));      
             }
         }
         
-        return getPigment().filter(colour);
+        return colour.add(pigmentColour.filter(diffuseColour));
     }
-    
 }

@@ -21,57 +21,44 @@ import jtrace.Colour;
 import jtrace.LightSource;
 import jtrace.Ray;
 import jtrace.Scene;
+import jtrace.object.SceneObject;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 /**
- * Adds specular highlights to a texture.
+ * Finish for adding specular highlights to a texture.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 public class SpecularFinish extends Finish {
     
-    Colour pigment;
-    double diffuse, specular, tightness, ambient;
-    
-    public SpecularFinish(Colour pigment,
-            double diffuse, double specular, double tightness,
-            double ambient) {
-        this.pigment = pigment;
-        this.diffuse = diffuse;
-        this.specular = specular;
-        this.tightness = tightness;
-        this.ambient = ambient;
-    }
-    
-    @Override
-    public double getSpecular() {
-        return specular;
-    }
-    
-    @Override
-    public double getSpecularTightness() {
-        return tightness;
-    }
+    double specular;
+    double tightness;
     
     /**
-     * Get colour resulting from specular reflection.
+     * Create specular finish.
      * 
-     * @param scene
-     * @param normalRay
-     * @param incidentRay
-     * @return 
+     * @param specularStrength Intensity of highlights
+     * @param specularTightness Tightness of highlights
      */
-    public Colour getSpecularColour(Scene scene,
-            List<LightSource> visibleLights,
-            Ray normalRay, Ray incidentRay) {
-        Colour colour = new Colour(0,0,0);
+    public SpecularFinish(double specularStrength, double specularTightness) {
+        this.specular = specularStrength;
+        this.tightness = specularTightness;
+    }
+
+    @Override
+    public Colour layerFinish(SceneObject object, Colour pigmentColour, Colour colour) {
+        
+        Colour specularColour = new Colour(0,0,0);
+        
+        Ray incidentRay = object.getIncidentRay();
+        Ray normalRay = object.getNormalRay();
         
         // Calculate direction of reflected ray:
         Vector3D reflected = incidentRay.direction
                 .add(-2.0*incidentRay.direction
                 .dotProduct(normalRay.direction), normalRay.direction);
         
-        for (LightSource light : visibleLights) {
+        for (LightSource light : object.getVisibleLights()) {
             
             // Determine distance and direction to light:
             Vector3D lightDir = light.getLocation().subtract(normalRay.origin);
@@ -83,14 +70,15 @@ public class SpecularFinish extends Finish {
             
             if (projection>0) {
                 // Intensity of specular highlighting:
-                double intensity = Math.pow(projection,getSpecularTightness())
+                double intensity = Math.pow(projection,tightness)
                         *light.getScaleSq()/lightDistanceSq;
                 
                 // Scale light colour by intensity and add to specular colour:
-                colour = colour.add(light.getColour().scale(intensity));
+                specularColour = specularColour.add(light.getColour().scale(intensity));
             }
         }
         
-        return colour;
+        return colour.add(specularColour);
+        
     }
 }
