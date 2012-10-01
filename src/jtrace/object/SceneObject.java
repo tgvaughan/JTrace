@@ -44,8 +44,9 @@ public abstract class SceneObject {
     
     // Details of last collision:
     Ray incidentRay;
-    Ray normalRay;
+    Ray normalRay, normalRayRef, normalRayTrans;
     Ray reflectedRay;
+    boolean internal;
     
     // The small value collision locations are moved out from their surfaces
     // by to prevent artifacts:
@@ -80,6 +81,36 @@ public abstract class SceneObject {
         return normalRay;
     }
     
+    public boolean isInternal() {
+        return internal;
+    }
+    
+    public Ray getNormalRayRef() {
+        if (normalRayRef == null) {
+            normalRayRef = new Ray();
+            normalRayRef.direction = normalRay.direction;
+            if (internal)
+                normalRayRef.origin = normalRay.origin.subtract(epsilon, normalRay.direction);
+            else
+                normalRayRef.origin = normalRay.origin.add(epsilon, normalRay.direction);
+        }
+        
+        return normalRayRef;
+    }
+    
+    public Ray getNormalRayTrans() {
+        if (normalRayTrans == null) {
+            normalRayTrans = new Ray();
+            normalRayTrans.direction = normalRay.direction;
+            if (internal)
+                normalRayTrans.origin = normalRay.origin.add(epsilon, normalRay.direction);
+            else
+                normalRayTrans.origin = normalRay.origin.subtract(epsilon, normalRay.direction);
+        }
+        
+        return normalRayTrans;
+    }
+    
     /**
      * Retrieve ray reflected from point of last collision.
      * 
@@ -91,7 +122,7 @@ public abstract class SceneObject {
         if (reflectedRay != null)
             return reflectedRay;
         
-        Vector3D reflectedOrigin = normalRay.origin;
+        Vector3D reflectedOrigin = getNormalRayRef().origin;
         Vector3D reflectedDir = incidentRay.direction
                 .add(-2.0*incidentRay.direction
                 .dotProduct(normalRay.direction), normalRay.direction);
@@ -116,6 +147,10 @@ public abstract class SceneObject {
         // Clear calculated collision information (allows for caching):
         visibleLights = null;
         reflectedRay = null;
+        normalRayRef = null;
+        normalRayTrans = null;
+        
+        internal = incidentRay.direction.dotProduct(normalRay.direction)>0;
         
         Colour colour = new Colour(0,0,0);
         for (Texture texture : textures) {
@@ -151,7 +186,7 @@ public abstract class SceneObject {
             return visibleLights;
         
         visibleLights = new ArrayList<LightSource>();
-        Vector3D location = normalRay.origin;
+        Vector3D location = getNormalRayRef().origin;
         
         for (LightSource light : scene.getLightSources()) {
             

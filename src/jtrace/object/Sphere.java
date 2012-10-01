@@ -70,10 +70,6 @@ public class Sphere extends SceneObject {
             Vector3D collisionLocation = ray.direction.scalarMultiply(alphaMinus).add(ray.origin);
             Vector3D normal = collisionLocation.subtract(centre).normalize();
             
-            // Hack to avoid child rays colliding with the same surface
-            // (Need a better way of doing this.)
-            collisionLocation = collisionLocation.add(epsilon, normal);
-            
             normalRay = new Ray(collisionLocation, normal);
             
             return alphaMinus;

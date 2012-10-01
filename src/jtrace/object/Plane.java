@@ -52,7 +52,6 @@ public class Plane extends SceneObject {
         incidentRay = ray;
         
         Vector3D collisionLocation = ray.origin.add(alpha, ray.direction);
-        collisionLocation = collisionLocation.add(epsilon, planeNormal);
         normalRay = new Ray(collisionLocation, planeNormal);
         
         Vector3D q = collisionLocation.subtract(planeLocation);

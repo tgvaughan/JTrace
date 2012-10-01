@@ -70,6 +70,6 @@ public class DiffuseFinish extends Finish {
             }
         }
         
-        return colour.add(pigmentColour.filter(diffuseColour));
+        return colour.add(pigmentColour.filter(diffuseColour).scale(diffuse));
     }
 }
