@@ -45,18 +45,18 @@ public class GlassSphere {
         
         
         Camera camera = new Camera(
-                new Vector3D(-1, 1, 3),
+                new Vector3D(1, 1, 2),
                 new Vector3D(0, 0, 0),
                 Vector3D.PLUS_J,
-                1.0, 1.6);
+                1.0, 4.0/3.0);
 
         Scene scene = new Scene();
         scene.setCamera(camera);
 
-        scene.addLightSource(new LightSource(new Vector3D(-3, 3, 3), 4));
+        scene.addLightSource(new LightSource(new Vector3D(-1, 3, 1), 4));
 
         FlatTexture sphereTexture =
-                (new FlatTexture(new SolidPigment(new Colour(0,0,0))))
+                (new FlatTexture(new SolidPigment(new Colour(1,1,1))))
                 .addFinish(new TransparentFinish(1.0));
         
         Sphere sphere = new Sphere(new Vector3D(0,0,0), 0.4);
@@ -73,7 +73,7 @@ public class GlassSphere {
         plane.addTexture(floorTexture);
         scene.addObject(plane);
         
-        BufferedImage image = scene.render(1440, 900);
+        BufferedImage image = scene.render(800, 600, 10);
         ImageIO.write(image, "PNG", new File("out.png"));
     }
 }

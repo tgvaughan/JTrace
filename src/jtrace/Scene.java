@@ -16,10 +16,20 @@
  */
 package jtrace;
 
+import com.fasterxml.jackson.core.JsonEncoding;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import jtrace.object.SceneObject;
 
 /**
@@ -33,7 +43,9 @@ public class Scene {
     List<LightSource> lightSources;
     List<SceneObject> sceneObjects;
     Colour backgroundColour;
-
+    
+    int recursionDepth, maxRecursionDepth;
+    
     /**
      * Constructor.
      */
@@ -106,7 +118,13 @@ public class Scene {
      */
     public Colour traceRay(Ray ray) {
 
-        // Determine closest object in scene:
+        // Check for recursion depth violation:
+        if (recursionDepth++ > maxRecursionDepth){
+            System.err.println("Warning: max recursion depth exceeded.");
+            return backgroundColour;
+        }
+                    
+        // Determine closest intersecting object in scene:
         double nearestObjectDist = Double.POSITIVE_INFINITY;
         SceneObject nearestObject = null;
         for (SceneObject object : sceneObjects) {
@@ -119,7 +137,7 @@ public class Scene {
 
         if (nearestObject == null)
             return backgroundColour;
-        else
+        else 
             return nearestObject.getCollisionColour();
     }
 
@@ -131,19 +149,27 @@ public class Scene {
      *
      * @return BufferedImage containing rendering.
      */
-    public BufferedImage render(int width, int height) {
+    public BufferedImage render(int width, int height, int maxRecursionDepth) {
         BufferedImage image = new BufferedImage(width, height,
                 BufferedImage.TYPE_INT_BGR);
+
+        this.maxRecursionDepth = maxRecursionDepth;
         
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
+                
                 Ray ray = camera.getRay(width, height, x, y);
+                
+                // Reset recursion depth:
+                recursionDepth = 0;
+                
+                // Trace ray through scene:
                 Colour pixelColour = traceRay(ray);
               
                 image.setRGB(x, y, pixelColour.getInt());
             }
         }
-
+        
         return image;
     }
 

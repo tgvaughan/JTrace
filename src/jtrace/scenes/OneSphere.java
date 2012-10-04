@@ -61,7 +61,7 @@ public class OneSphere {
         sphere.addTexture(sphereTexture);
         scene.addObject(sphere);
         
-        BufferedImage image = scene.render(640, 480);
+        BufferedImage image = scene.render(640, 480, 10);
         ImageIO.write(image, "PNG", new File("out.png"));
     }
 }

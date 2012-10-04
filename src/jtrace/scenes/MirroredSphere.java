@@ -76,7 +76,7 @@ public class MirroredSphere {
         plane.addTexture(floorTexture);
         scene.addObject(plane);
         
-        BufferedImage image = scene.render(1440, 900);
+        BufferedImage image = scene.render(1440, 900, 10);
         ImageIO.write(image, "PNG", new File("out.png"));
     }
 }
