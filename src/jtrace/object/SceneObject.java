@@ -123,8 +123,8 @@ public abstract class SceneObject {
         
         Vector3D reflectedOrigin = getNormalRayRef().origin;
         Vector3D reflectedDir = incidentRay.direction
-                .add(-2.0*incidentRay.direction
-                .dotProduct(normalRay.direction), normalRay.direction);
+                .add(-2.0*incidentRay.direction.dotProduct(normalRay.direction),
+                        normalRay.direction);
         
         reflectedRay = new Ray(reflectedOrigin, reflectedDir);
         
