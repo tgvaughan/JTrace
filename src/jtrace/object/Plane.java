@@ -17,7 +17,6 @@
 package jtrace.object;
 
 import jtrace.Ray;
-import jtrace.texture.Finish;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 /**

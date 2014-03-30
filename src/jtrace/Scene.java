@@ -16,20 +16,9 @@
  */
 package jtrace;
 
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import jtrace.object.SceneObject;
 
 /**
@@ -146,6 +135,7 @@ public class Scene {
      *
      * @param width Width of resulting image.
      * @param height Height of resulting image.
+     * @param maxRecursionDepth
      *
      * @return BufferedImage containing rendering.
      */
@@ -157,6 +147,8 @@ public class Scene {
         
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
+                
+                //System.out.format("x:%d y%d\n", x,y);
                 
                 Ray ray = camera.getRay(width, height, x, y);
                 

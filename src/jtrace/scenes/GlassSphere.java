@@ -45,10 +45,10 @@ public class GlassSphere {
         
         
         Camera camera = new Camera(
-                new Vector3D(1, 1, 2),
+                new Vector3D(0, 0, 2.0),
                 new Vector3D(0, 0, 0),
                 Vector3D.PLUS_J,
-                1.0, 4.0/3.0);
+                1.0, 800.0/600.0);
 
         Scene scene = new Scene();
         scene.setCamera(camera);
@@ -57,7 +57,7 @@ public class GlassSphere {
 
         FlatTexture sphereTexture =
                 (new FlatTexture(new SolidPigment(new Colour(1,1,1))))
-                .addFinish(new TransparentFinish(1.0));
+                .addFinish(new TransparentFinish(1.1));
         
         Sphere sphere = new Sphere(new Vector3D(0,0,0), 0.4);
         sphere.addTexture(sphereTexture);

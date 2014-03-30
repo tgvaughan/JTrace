@@ -19,6 +19,7 @@ package jtrace.texture;
 import jtrace.Colour;
 import jtrace.Ray;
 import jtrace.object.SceneObject;
+import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 /**
@@ -51,23 +52,28 @@ public class TransparentFinish extends Finish {
  
         // Check direction of incident ray (inside to out or outside to in)
         // and adjust ior accordingly:
-        double snellFactor, sign;
+        double snellFactor;
+        Vector3D axis;
         if (incidentRay.direction.dotProduct(normalRay.direction)<0.0) {
-            snellFactor = ior;
-            sign = 1.0;
-        } else {
             snellFactor = 1.0/ior;
-            sign = -1.0;
+            axis = incidentRay.direction.crossProduct(normalRay.direction);
+        } else {
+            snellFactor = ior;
+            axis = normalRay.direction.crossProduct(incidentRay.direction);
         }
         
-        Vector3D horiz = normalRay.direction.crossProduct(
-                incidentRay.direction.crossProduct(normalRay.direction))
-                .scalarMultiply(snellFactor);
+        if (axis.getNorm()>0) {
+            axis = axis.normalize();
+        } else {
+            return new Ray(normalRay.getOrigin(), incidentRay.direction);
+        }
         
-        double vertMagnitude = sign*Math.sqrt(1.0 - horiz.getNormSq());
-        Vector3D vert = normalRay.direction.scalarMultiply(vertMagnitude);
+        double angle = Math.asin((incidentRay.direction.normalize().crossProduct(normalRay.direction).normalize()).getNorm());
+        double newAngle = Math.asin(snellFactor*Math.sin(angle));
         
-        Vector3D refractedDir = vert.add(horiz);
+        Rotation rotation = new Rotation(axis, newAngle - angle);
+
+        Vector3D refractedDir = rotation.applyTo(incidentRay.direction);
         
         return new Ray(normalRay.getOrigin(), refractedDir);
     }

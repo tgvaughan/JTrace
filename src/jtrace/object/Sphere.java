@@ -17,7 +17,6 @@
 package jtrace.object;
 
 import jtrace.Ray;
-import jtrace.texture.Finish;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 /**
@@ -37,8 +36,7 @@ public class Sphere extends SceneObject {
      * Constructor for sphere objects.
      * 
      * @param centre
-     * @param radius
-     * @param texture 
+     * @param radius 
      */
     public Sphere(Vector3D centre, double radius) {
         this.centre = centre;
@@ -65,26 +63,24 @@ public class Sphere extends SceneObject {
         double alphaPlus = alpha0 + dalpha;
         double alphaMinus = alpha0 - dalpha;
        
-        if (alphaMinus < alphaPlus && alphaMinus>0) {
-            incidentRay = ray;
-            Vector3D collisionLocation = ray.direction.scalarMultiply(alphaMinus).add(ray.origin);
-            Vector3D normal = collisionLocation.subtract(centre).normalize();
-            
-            normalRay = new Ray(collisionLocation, normal);
-            
-            return alphaMinus;
-        }
+        // Abort if no intersections in front of us
+        if (alphaMinus < 0 && alphaPlus < 0)
+            return Double.POSITIVE_INFINITY;
         
-        if (alphaPlus > 0) {
-            incidentRay = ray;
-            Vector3D collisionLocation = ray.direction.scalarMultiply(alphaPlus).add(ray.origin);
-            Vector3D normal = collisionLocation.subtract(centre).normalize();
-            normalRay = new Ray(collisionLocation, normal);
-            
-            return alphaPlus;
-        }
+        // Find closest intersection in front of us
+        double alpha;
+        if (alphaMinus < alphaPlus && alphaMinus>0)
+            alpha = alphaMinus;
+        else
+            alpha = alphaPlus;
+
+        // Record incident and normal rays
+        incidentRay = ray;
+        Vector3D collisionLocation = ray.direction.scalarMultiply(alpha).add(ray.origin);
+        Vector3D normal = collisionLocation.subtract(centre).normalize();
+        normalRay = new Ray(collisionLocation, normal);
         
-        return Double.POSITIVE_INFINITY;
+        return alpha;
     }
 
     @Override

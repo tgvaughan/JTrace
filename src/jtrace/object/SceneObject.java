@@ -22,7 +22,6 @@ import jtrace.Colour;
 import jtrace.LightSource;
 import jtrace.Ray;
 import jtrace.Scene;
-import jtrace.texture.Finish;
 import jtrace.texture.Texture;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
@@ -137,7 +136,7 @@ public abstract class SceneObject {
      * returning the distance to this point from the origin of the ray.
      * Records the colliding and normal rays for future interrogation.
      * 
-     * @param ray incomming ray
+     * @param ray incoming ray
      * @return distance from origin of ray to first intersection
      */
     public abstract double getFirstCollision(Ray ray);

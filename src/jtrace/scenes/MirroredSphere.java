@@ -56,7 +56,7 @@ public class MirroredSphere {
         scene.addLightSource(new LightSource(new Vector3D(-3, 3, 3), 4));
 
         FlatTexture sphereTexture =
-                (new FlatTexture(new SolidPigment(new Colour(1,0,1))))
+                (new FlatTexture(new SolidPigment(new Colour(0,1,0))))
                 .addFinish(new AmbientFinish(0.1))
                 .addFinish(new MirrorFinish(0.2))
                 .addFinish(new DiffuseFinish(0.8))
@@ -69,7 +69,7 @@ public class MirroredSphere {
         FlatTexture floorTexture =
                 (new FlatTexture(new CheckeredPigment(new Colour(.5,.5,.5), new Colour(1,1,1), 1)))
                 .addFinish(new DiffuseFinish(1.0))
-                .addFinish(new AmbientFinish(0.05));
+                .addFinish(new AmbientFinish(0.1));
         
         Plane plane = new Plane(new Vector3D(0,-0.4,0),
                 Vector3D.PLUS_J, Vector3D.PLUS_K);
