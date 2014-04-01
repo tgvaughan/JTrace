@@ -16,9 +16,13 @@
  */
 package jtrace.scenes;
 
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.imageio.ImageIO;
 import jtrace.Camera;
 import jtrace.Colour;
@@ -37,6 +41,7 @@ import jtrace.texture.SpecularFinish;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 /**
+ * Cube test scene.
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
@@ -45,7 +50,7 @@ public class OneCube {
     public static void main(String[] args) throws IOException {
         
         Camera camera = new Camera(
-                new Vector3D(-1, 1, -2),
+                new Vector3D(1, 1, -2),
                 new Vector3D(0, 0, 0),
                 Vector3D.PLUS_J,
                 1.0, 1440.0/900.0);
@@ -60,9 +65,8 @@ public class OneCube {
                 .addFinish(new DiffuseFinish(1.0))
 //                .addFinish(new AmbientFinish(0.1))
                 .addFinish(new MirrorFinish(0.2));
-//                .addFinish(new SpecularFinish(1.0, 100));
         
-        Cube cube = new Cube(new Vector3D(1,0,0), 0.4);
+        Cube cube = new Cube(new Vector3D(0,0,0), 0.5);
         cube.addTexture(glossGreen);
         scene.addObject(cube);
         
@@ -71,12 +75,34 @@ public class OneCube {
         floorTexture.addFinish(new DiffuseFinish(1.0));
         floorTexture.addFinish(new AmbientFinish(0.05));
         
-        Plane plane = new Plane(new Vector3D(0,-0.4,0),
+        Plane plane = new Plane(new Vector3D(0,-0.25,0),
                 Vector3D.PLUS_J, Vector3D.PLUS_K);
         plane.addTexture(floorTexture);
         scene.addObject(plane);
         
         BufferedImage image = scene.render(1440, 900, 10);
+        
+        // Debugging:
+        Graphics gr = image.getGraphics(); 
+        gr.setColor(Color.red);
+
+        int [] coord1, coord2;
+        coord1 = camera.getPixel(1440, 900, new Vector3D(-.25,-.25,-.25));
+        coord2 = camera.getPixel(1440, 900, new Vector3D(.25,-.25,-.25));
+        gr.drawLine(coord1[0], coord1[1], coord2[0], coord2[1]);
+        coord2 = camera.getPixel(1440, 900, new Vector3D(-.25,.25,-.25));
+        gr.drawLine(coord1[0], coord1[1], coord2[0], coord2[1]);
+        coord2 = camera.getPixel(1440, 900, new Vector3D(-.25,-.25,.25));
+        gr.drawLine(coord1[0], coord1[1], coord2[0], coord2[1]);
+        
+        coord1 = camera.getPixel(1440, 900, new Vector3D(.25,.25,.25));
+        coord2 = camera.getPixel(1440, 900, new Vector3D(-.25,.25,.25));
+        gr.drawLine(coord1[0], coord1[1], coord2[0], coord2[1]);
+        coord2 = camera.getPixel(1440, 900, new Vector3D(.25,-.25,.25));
+        gr.drawLine(coord1[0], coord1[1], coord2[0], coord2[1]);
+        coord2 = camera.getPixel(1440, 900, new Vector3D(.25,.25,-.25));
+        gr.drawLine(coord1[0], coord1[1], coord2[0], coord2[1]);
+        
         ImageIO.write(image, "PNG", new File("out.png"));
     }
 }

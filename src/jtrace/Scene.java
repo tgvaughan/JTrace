@@ -16,10 +16,13 @@
  */
 package jtrace;
 
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import jtrace.object.SceneObject;
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 /**
  * Describes a scene to trace rays through.
@@ -35,13 +38,51 @@ public class Scene {
     
     int recursionDepth, maxRecursionDepth;
     
+    boolean debugThisRay;
+    double debugFrac;
+    
+    PathNode pathTreeRoot;
+    
+    public class PathNode {
+            Ray ray;
+            PathNode parent;
+            List<PathNode> children;
+
+            public PathNode(PathNode parent, Ray ray) {
+                this.parent = parent;
+                this.ray = ray;
+                this.children = new ArrayList<>();
+            }
+    
+            public void addChild(PathNode child) {
+                children.add(child);
+            }
+            
+            PathNode getNode(Ray otherRay) {
+                if (ray.equals(otherRay))
+                    return this;
+                else {
+                    for (PathNode child : children) {
+                        PathNode res = child.getNode(otherRay);
+                        if (res != null)
+                            return res;
+                    }
+                }
+                
+                return null;
+            }
+    }
+    
     /**
      * Constructor.
      */
     public Scene() {
-        lightSources = new ArrayList<LightSource>();
-        sceneObjects = new ArrayList<SceneObject>();
+        lightSources = new ArrayList<>();
+        sceneObjects = new ArrayList<>();
         backgroundColour = new Colour(0.0, 0.0, 0.0);
+        
+        debugThisRay = false;
+        debugFrac = -1;
     }
 
     /**
@@ -79,6 +120,15 @@ public class Scene {
      */
     public void setBackground(Colour colour) {
         this.backgroundColour = colour;
+    }
+    
+    /**
+     * Enable/disable debug rays.
+     * 
+     * @param frac fraction of rays to debug
+     */
+    public void enableDebug(double frac) {
+        this.debugFrac = frac;
     }
     
     /**
@@ -126,8 +176,9 @@ public class Scene {
 
         if (nearestObject == null)
             return backgroundColour;
-        else 
+        else {
             return nearestObject.getCollisionColour();
+        }
     }
 
     /**
@@ -145,6 +196,8 @@ public class Scene {
 
         this.maxRecursionDepth = maxRecursionDepth;
         
+        Random random = new Random();
+        
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 
@@ -155,10 +208,14 @@ public class Scene {
                 // Reset recursion depth:
                 recursionDepth = 0;
                 
+                debugThisRay = random.nextDouble()<debugFrac;
+                
                 // Trace ray through scene:
                 Colour pixelColour = traceRay(ray);
               
                 image.setRGB(x, y, pixelColour.getInt());
+                
+                Graphics2D graphics = image.createGraphics();
             }
         }
         
