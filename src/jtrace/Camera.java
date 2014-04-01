@@ -97,11 +97,13 @@ public class Camera {
     public int[] getPixel(int width, int height, Vector3D point) {
         int [] coord = new int[2];
         
-        double lu = point.dotProduct(up);
-        double lr = point.dotProduct(right);
-        double lp = point.dotProduct(direction);
+        Vector3D l = point.subtract(location);
         
-        coord[0] = (int)Math.round(((lr/lp)*(0.5/fovRight) + 0.5)*width);
+        double lu = l.dotProduct(up);
+        double lr = l.dotProduct(right);
+        double lp = l.dotProduct(direction);
+        
+        coord[0] = (int)Math.round(((lr/lp)*(1.0/fovRight) + 0.5)*width);
         coord[1] = (int)Math.round(((lu/lp)*(-1.0/fovUp) + 0.5)*height);
         
         return coord;
