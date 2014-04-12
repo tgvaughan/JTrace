@@ -30,6 +30,7 @@ import jtrace.texture.AmbientFinish;
 import jtrace.texture.DiffuseFinish;
 import jtrace.texture.FlatTexture;
 import jtrace.texture.ImagePigment;
+import jtrace.texture.MirrorFinish;
 import jtrace.texture.SolidPigment;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
@@ -38,18 +39,14 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
  *
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
-public class OneCube {
+public class OneCubeAnimate {
     
     public static void main(String[] args) throws IOException {
         
-        Camera camera = new Camera(
-                new Vector3D(1, 1, -2),
-                new Vector3D(0, 0, 0),
-                Vector3D.PLUS_J,
-                1.0, 1440.0/900.0);
+
 
         Scene scene = new Scene();
-        scene.setCamera(camera);
+
         
         scene.addLightSource(new LightSource(new Vector3D(-3,3,-3), 4));
         scene.addLightSource(new LightSource(new Vector3D(6,6,-3), 4));
@@ -57,12 +54,14 @@ public class OneCube {
         FlatTexture cubeTexture = (new FlatTexture(new SolidPigment(new Colour(0,0,1))));
         cubeTexture.addFinish(new DiffuseFinish(1.0));
         cubeTexture.addFinish(new AmbientFinish(0.1));
-        //cubeTexture.addFinish(new MirrorFinish(0.2));
+        cubeTexture.addFinish(new MirrorFinish(0.2));
         
         Cube cube = new Cube(new Vector3D(0,0,0), 0.5);
         cube.addTexture(cubeTexture);
         scene.addObject(cube);
         
+//        FlatTexture floorTexture = new FlatTexture(new CheckeredPigment(
+//                new Colour(.5,.5,.5), new Colour(1,1,1), 1));
         FlatTexture floorTexture = new FlatTexture(
                 new ImagePigment(new File("wood.jpg"), 1.0));
         floorTexture.addFinish(new DiffuseFinish(1.0));
@@ -71,9 +70,22 @@ public class OneCube {
                 Vector3D.PLUS_J, Vector3D.PLUS_K);
         plane.addTexture(floorTexture);
         scene.addObject(plane);
-        
-        BufferedImage image = scene.render(1440, 900, 10);
-        
-        ImageIO.write(image, "PNG", new File("out.png"));
+
+        Vector3D pointAt = new Vector3D(0,0,0);
+
+        int steps = 100;
+        for (int i=0; i<steps; i++) {
+            double R = 2.0;
+            double x = R*Math.sin(i*2*Math.PI/steps);
+            double z = -R*Math.cos(i*2*Math.PI/steps);
+            Camera camera = new Camera(
+                    new Vector3D(x, 1, z),
+                    pointAt,
+                    Vector3D.PLUS_J,
+                    1.0, 800.0/600.0);
+            scene.setCamera(camera);
+            BufferedImage image = scene.render(800, 600, 10);
+            ImageIO.write(image, "PNG", new File(String.format("out_%02d.png", i)));
+        }
     }
 }

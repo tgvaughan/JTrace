@@ -16,8 +16,6 @@
  */
 package jtrace;
 
-import java.awt.Color;
-
 /**
  * Class of objects describing colours.
  *

@@ -72,20 +72,21 @@ public class ImagePigment extends Pigment {
 
     @Override
     public Colour getPigment(SceneObject object) {
-        int x = (int)(image.getWidth()*object.getU()/scaleU + 0.5*image.getWidth());
-        int y = (int)(image.getHeight()*object.getV()/scaleV + 0.5*image.getHeight());
+        
+        double x = image.getWidth()*object.getU()/scaleU + 0.5*image.getWidth();
+        double y = image.getHeight()*object.getV()/scaleV + 0.5*image.getHeight();
         
         if (x<0)
-            x = image.getWidth()-1 - (-x)%image.getWidth();
+            x = image.getWidth()-1 - (-x)%(image.getWidth()-1);
         else
             x = x%image.getWidth();
         
         if (y<0)
-            y = image.getHeight()-1 - (-y)%image.getHeight();
+            y = image.getHeight()-1 - (-y)%(image.getHeight()-1);
         else
             y = y%image.getHeight();
         
-        return new Colour(image.getRGB(x, y));
+        return new Colour(image.getRGB((int)x, (int)y));
     }
     
 }
