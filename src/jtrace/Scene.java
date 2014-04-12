@@ -16,7 +16,7 @@
  */
 package jtrace;
 
-import java.awt.Graphics2D;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -215,7 +215,31 @@ public class Scene {
               
                 image.setRGB(x, y, pixelColour.getInt());
                 
-                Graphics2D graphics = image.createGraphics();
+            }
+        }
+        
+        return image;
+    }
+    
+    /**
+     * Render scene overlayed with wire frame representation of objects.
+     * 
+     * @param width
+     * @param height
+     * @param maxRecursionDepth
+     * @return 
+     */
+    public BufferedImage renderWireFrame(int width, int height, int maxRecursionDepth) {
+        BufferedImage image = render(width, height, maxRecursionDepth);
+        Graphics gr = image.getGraphics(); 
+        gr.setColor(java.awt.Color.cyan);
+        
+        for (SceneObject object : sceneObjects) {
+            for (Vector3D[] edge : object.getWireFrame()) {
+                int[] coord1 = camera.getPixel(width, height, edge[0]);
+                int[] coord2 = camera.getPixel(width, height, edge[1]);
+                
+                gr.drawLine(coord1[0], coord1[1], coord2[0], coord2[1]);
             }
         }
         

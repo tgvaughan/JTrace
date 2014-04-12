@@ -38,7 +38,7 @@ public class FlatTexture extends Texture {
      */
     public FlatTexture(Pigment pigment) {
         this.pigment = pigment;
-        finishes = new ArrayList<Finish>();
+        finishes = new ArrayList<>();
     }
     
     /**

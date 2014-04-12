@@ -16,6 +16,7 @@
  */
 package jtrace.object;
 
+import java.util.List;
 import jtrace.Ray;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
@@ -90,6 +91,11 @@ public class Sphere extends SceneObject {
 
     @Override
     public double getV() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<Vector3D[]> getWireFrame() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     

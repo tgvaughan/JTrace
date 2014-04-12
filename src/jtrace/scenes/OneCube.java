@@ -35,6 +35,7 @@ import jtrace.texture.AmbientFinish;
 import jtrace.texture.CheckeredPigment;
 import jtrace.texture.DiffuseFinish;
 import jtrace.texture.FlatTexture;
+import jtrace.texture.ImagePigment;
 import jtrace.texture.MirrorFinish;
 import jtrace.texture.SolidPigment;
 import jtrace.texture.SpecularFinish;
@@ -61,19 +62,20 @@ public class OneCube {
         scene.addLightSource(new LightSource(new Vector3D(-3,3,-3), 4));
         scene.addLightSource(new LightSource(new Vector3D(6,6,-3), 4));
         
-        FlatTexture cubeTexture = (new FlatTexture(new SolidPigment(new Colour(0,0,1))))
-                .addFinish(new DiffuseFinish(1.0))
-//                .addFinish(new AmbientFinish(0.1))
-                .addFinish(new MirrorFinish(0.2));
+        FlatTexture cubeTexture = (new FlatTexture(new SolidPigment(new Colour(0,0,1))));
+        cubeTexture.addFinish(new DiffuseFinish(1.0));
+        cubeTexture.addFinish(new AmbientFinish(0.1));
+        //cubeTexture.addFinish(new MirrorFinish(0.2));
         
         Cube cube = new Cube(new Vector3D(0,0,0), 0.5);
         cube.addTexture(cubeTexture);
         scene.addObject(cube);
         
-        FlatTexture floorTexture = new FlatTexture(new CheckeredPigment(
-                new Colour(.5,.5,.5), new Colour(1,1,1), 1));
+//        FlatTexture floorTexture = new FlatTexture(new CheckeredPigment(
+//                new Colour(.5,.5,.5), new Colour(1,1,1), 1));
+        FlatTexture floorTexture = new FlatTexture(
+                new ImagePigment(new File("wood.jpg"), 1.0));
         floorTexture.addFinish(new DiffuseFinish(1.0));
-        floorTexture.addFinish(new AmbientFinish(0.05));
         
         Plane plane = new Plane(new Vector3D(0,-0.25,0),
                 Vector3D.PLUS_J, Vector3D.PLUS_K);
@@ -81,52 +83,6 @@ public class OneCube {
         scene.addObject(plane);
         
         BufferedImage image = scene.render(1440, 900, 10);
-        
-        // Debugging:
-        Graphics gr = image.getGraphics(); 
-        gr.setColor(Color.cyan);
-
-        int [] coord1, coord2;
-        
-        coord1 = camera.getPixel(1440, 900, new Vector3D(-.25,-.25,-.25));
-        coord2 = camera.getPixel(1440, 900, new Vector3D(.25,-.25,-.25));
-        gr.drawLine(coord1[0], coord1[1], coord2[0], coord2[1]);
-        coord1 = camera.getPixel(1440, 900, new Vector3D(.25,-.25,-.25));
-        coord2 = camera.getPixel(1440, 900, new Vector3D(.25,.25,-.25));
-        gr.drawLine(coord1[0], coord1[1], coord2[0], coord2[1]);
-        coord1 = camera.getPixel(1440, 900, new Vector3D(.25,.25,-.25));
-        coord2 = camera.getPixel(1440, 900, new Vector3D(-.25,.25,-.25));
-        gr.drawLine(coord1[0], coord1[1], coord2[0], coord2[1]);
-        coord1 = camera.getPixel(1440, 900, new Vector3D(-.25,.25,-.25));
-        coord2 = camera.getPixel(1440, 900, new Vector3D(-.25,-.25,-.25));
-        gr.drawLine(coord1[0], coord1[1], coord2[0], coord2[1]);
-        
-        coord1 = camera.getPixel(1440, 900, new Vector3D(-.25,-.25,.25));
-        coord2 = camera.getPixel(1440, 900, new Vector3D(.25,-.25,.25));
-        gr.drawLine(coord1[0], coord1[1], coord2[0], coord2[1]);
-        coord1 = camera.getPixel(1440, 900, new Vector3D(.25,-.25,.25));
-        coord2 = camera.getPixel(1440, 900, new Vector3D(.25,.25,.25));
-        gr.drawLine(coord1[0], coord1[1], coord2[0], coord2[1]);
-        coord1 = camera.getPixel(1440, 900, new Vector3D(.25,.25,.25));
-        coord2 = camera.getPixel(1440, 900, new Vector3D(-.25,.25,.25));
-        gr.drawLine(coord1[0], coord1[1], coord2[0], coord2[1]);
-        coord1 = camera.getPixel(1440, 900, new Vector3D(-.25,.25,.25));
-        coord2 = camera.getPixel(1440, 900, new Vector3D(-.25,-.25,.25));
-        gr.drawLine(coord1[0], coord1[1], coord2[0], coord2[1]);
-        
-        coord1 = camera.getPixel(1440, 900, new Vector3D(-.25,-.25,-.25));
-        coord2 = camera.getPixel(1440, 900, new Vector3D(-.25,-.25,.25));
-        gr.drawLine(coord1[0], coord1[1], coord2[0], coord2[1]);
-        coord1 = camera.getPixel(1440, 900, new Vector3D(.25,-.25,-.25));
-        coord2 = camera.getPixel(1440, 900, new Vector3D(.25,-.25,.25));
-        gr.drawLine(coord1[0], coord1[1], coord2[0], coord2[1]);
-        coord1 = camera.getPixel(1440, 900, new Vector3D(-.25,.25,-.25));
-        coord2 = camera.getPixel(1440, 900, new Vector3D(-.25,.25,.25));
-        gr.drawLine(coord1[0], coord1[1], coord2[0], coord2[1]);
-        coord1 = camera.getPixel(1440, 900, new Vector3D(.25,.25,-.25));
-        coord2 = camera.getPixel(1440, 900, new Vector3D(.25,.25,.25));
-        gr.drawLine(coord1[0], coord1[1], coord2[0], coord2[1]);
-
         
         ImageIO.write(image, "PNG", new File("out.png"));
     }

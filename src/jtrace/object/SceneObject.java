@@ -35,27 +35,39 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
  */
 public abstract class SceneObject {
     
-    // Scene that object resides in:
-    Scene scene;
+    /**
+     * Scene that object resides in
+     */
+    private Scene scene;
     
-    // Textures to apply to object:
-    List<Texture> textures;
+    /**
+     * Textures to apply to object.
+     */
+    private List<Texture> textures;
     
-    // Details of last collision:
-    Ray incidentRay;
-    Ray normalRay, normalRayRef, normalRayTrans;
-    Ray reflectedRay;
-    boolean internal;
+    /**
+     * Details of last collision.
+     */
+    protected Ray incidentRay;
+    protected Ray normalRay, normalRayRef, normalRayTrans;
+    protected Ray reflectedRay;
+    protected boolean internal;
     
-    // The small value collision locations are moved out from their surfaces
-    // by to prevent artifacts:
-    static double epsilon = 1e-5;
+    /**
+     * The small value collision locations are moved out from their surfaces
+     * by to prevent artifacts.
+     */
+    static double EPSILON = 1e-5;
     
-    // UV coordinates of collision point.
-    double u, v;
+    /**
+     * UV coordinates of collision point.
+     */
+    protected double u, v;
     
-    // Light sources visible from last collision point:
-    List<LightSource> visibleLights;
+    /**
+     * Light sources visible from last collision point.
+     */
+    private List<LightSource> visibleLights;
     
     public void setScene(Scene scene) {
         this.scene = scene;
@@ -67,7 +79,7 @@ public abstract class SceneObject {
     
     public void addTexture(Texture texture) {
         if (textures == null)
-            textures = new ArrayList<Texture>();
+            textures = new ArrayList<>();
         
         textures.add(texture);
     }
@@ -84,27 +96,41 @@ public abstract class SceneObject {
         return internal;
     }
     
+    /**
+     * Retrieve ray normal to surface with the origin shifted by epsilon
+     * so that the surface itself cannot be hit by a REFLECTED ray starting
+     * at this location.
+     * 
+     * @return normal ray
+     */
     public Ray getNormalRayRef() {
         if (normalRayRef == null) {
             normalRayRef = new Ray();
             normalRayRef.direction = normalRay.direction;
             if (internal)
-                normalRayRef.origin = normalRay.origin.subtract(epsilon, normalRay.direction);
+                normalRayRef.origin = normalRay.origin.subtract(EPSILON, normalRay.direction);
             else
-                normalRayRef.origin = normalRay.origin.add(epsilon, normalRay.direction);
+                normalRayRef.origin = normalRay.origin.add(EPSILON, normalRay.direction);
         }
         
         return normalRayRef;
     }
     
+    /**
+     * Retrieve ray normal to surface with the origin shifted by epsilon
+     * so that the surface itself cannot be hit by a TRANSMITTED ray starting
+     * at this location.
+     * 
+     * @return normal ray
+     */
     public Ray getNormalRayTrans() {
         if (normalRayTrans == null) {
             normalRayTrans = new Ray();
             normalRayTrans.direction = normalRay.direction;
             if (internal)
-                normalRayTrans.origin = normalRay.origin.add(epsilon, normalRay.direction);
+                normalRayTrans.origin = normalRay.origin.add(EPSILON, normalRay.direction);
             else
-                normalRayTrans.origin = normalRay.origin.subtract(epsilon, normalRay.direction);
+                normalRayTrans.origin = normalRay.origin.subtract(EPSILON, normalRay.direction);
         }
         
         return normalRayTrans;
@@ -141,6 +167,12 @@ public abstract class SceneObject {
      */
     public abstract double getFirstCollision(Ray ray);
     
+    /**
+     * Mix values obtained from the layered textures to obtain the colour at
+     * the point of collision.
+     * 
+     * @return colour at collision point
+     */
     public Colour getCollisionColour() {
         
         // Clear calculated collision information (allows for caching):
@@ -208,4 +240,11 @@ public abstract class SceneObject {
         return visibleLights;
     }
     
+    /**
+     * Obtain a list of length 2 arrays of vectors representing edges in a
+     * wireframe representation of this object.
+     * 
+     * @return wireframe edges
+     */
+    public abstract List<Vector3D[]> getWireFrame();
 }

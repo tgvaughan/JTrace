@@ -16,6 +16,8 @@
  */
 package jtrace;
 
+import java.awt.Color;
+
 /**
  * Class of objects describing colours.
  *
@@ -25,12 +27,35 @@ public class Colour {
     
     double r, g, b;
     
+    /**
+     * Construct colour from RGB triplet.
+     * 
+     * @param r
+     * @param g
+     * @param b 
+     */
     public Colour(double r, double g, double b) {
         this.r = r;
         this.g = g;
         this.b = b;
     }
     
+    /**
+     * Construct colour from 32 bit integer representation.
+     * 
+     * @param c integer representing colour
+     */
+    public Colour(int c) {
+        this.r = ((0xff0000 & c) >> 16)/255.0;
+        this.g = ((0x00ff00 & c) >> 8)/255.0;
+        this.b = (0x0000ff & c)/255.0;
+    }
+    
+    /**
+     * Get 32bit integer representation of colour.
+     * 
+     * @return integer representing colour
+     */
     public int getInt() {
         int res = (int)(Math.min(r, 1.0)*255) << 16;
         res += (int)(Math.min(g,1.0)*255) << 8;

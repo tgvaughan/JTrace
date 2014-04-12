@@ -16,6 +16,8 @@
  */
 package jtrace.object;
 
+import java.util.ArrayList;
+import java.util.List;
 import jtrace.Ray;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
@@ -31,12 +33,22 @@ public class Plane extends SceneObject {
     Vector3D planeNorth;
     Vector3D planeEast;
     
+    /**
+     * Create a plane that passes through location with the given surface
+     * normal vector.  The component of the north vector along the plane
+     * determines the orientation of the uv coordinate system used in
+     * texture mapping.
+     * 
+     * @param location
+     * @param normal
+     * @param north 
+     */
     public Plane(Vector3D location, Vector3D normal, Vector3D north) {
         this.planeLocation = location;
         this.planeNormal = normal;
         
         this.planeNorth = normal.crossProduct(north.crossProduct(normal)).normalize();
-        this.planeEast = north.crossProduct(normal);
+        this.planeEast = north.crossProduct(normal).normalize();
     }
 
     @Override
@@ -69,5 +81,27 @@ public class Plane extends SceneObject {
     @Override
     public double getV() {
         return v;
+    }
+
+    @Override
+    public List<Vector3D[]> getWireFrame() {
+        List<Vector3D[]> edges = new ArrayList<>();
+
+        Vector3D A = planeLocation.add(0.5,planeNorth).add(0.5,planeEast);
+        Vector3D B = planeLocation.add(0.5,planeNorth).subtract(0.5,planeEast);
+        Vector3D C = planeLocation.subtract(0.5,planeNorth).subtract(0.5,planeEast);
+        Vector3D D = planeLocation.subtract(0.5,planeNorth).add(0.5,planeEast);
+        
+        Vector3D[] edge1 = {A,B};
+        Vector3D[] edge2 = {B,C};
+        Vector3D[] edge3 = {C,D};
+        Vector3D[] edge4 = {D,A};
+        
+        edges.add(edge1);
+        edges.add(edge2);
+        edges.add(edge3);
+        edges.add(edge4);
+        
+        return edges;
     }
 }
