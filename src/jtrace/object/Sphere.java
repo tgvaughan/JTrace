@@ -40,12 +40,14 @@ public class Sphere extends SceneObject {
      * @param radius 
      */
     public Sphere(Vector3D centre, double radius) {
+        super();
+        
         this.centre = centre;
         this.radius = radius;
     }
 
     @Override
-    public double getFirstCollision(Ray ray) {
+    public double getFirstCollisionObjectFrame(Ray ray) {
         
         Vector3D displacement = ray.getOrigin().subtract(centre);
         
@@ -95,7 +97,7 @@ public class Sphere extends SceneObject {
     }
 
     @Override
-    public List<Vector3D[]> getWireFrame() {
+    public List<Vector3D[]> getWireFrameObjectFrame() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     

@@ -28,33 +28,27 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
  */
 public class Plane extends SceneObject {
     
-    Vector3D planeLocation;
     Vector3D planeNormal;
     Vector3D planeNorth;
     Vector3D planeEast;
     
     /**
-     * Create a plane that passes through location with the given surface
-     * normal vector.  The component of the north vector along the plane
-     * determines the orientation of the uv coordinate system used in
-     * texture mapping.
-     * 
-     * @param location
-     * @param normal
-     * @param north 
+     * Create plane that passes through the origin and with a normal pointing
+     * in the positive y direction. The positive u and v directions are the
+     * x and z unit vectors.
      */
-    public Plane(Vector3D location, Vector3D normal, Vector3D north) {
-        this.planeLocation = location;
-        this.planeNormal = normal;
-        
-        this.planeNorth = normal.crossProduct(north.crossProduct(normal)).normalize();
-        this.planeEast = north.crossProduct(normal).normalize();
+    public Plane() {
+        super();
+
+        this.planeNormal = Vector3D.PLUS_J;
+        this.planeNorth = Vector3D.PLUS_K;
+        this.planeEast = Vector3D.PLUS_I;
     }
 
     @Override
-    public double getFirstCollision(Ray ray) {
+    public double getFirstCollisionObjectFrame(Ray ray) {
         
-        double alpha = planeNormal.dotProduct(planeLocation.subtract(ray.origin))
+        double alpha = planeNormal.dotProduct(Vector3D.ZERO.subtract(ray.origin))
                 / planeNormal.dotProduct(ray.direction);
         
         if (alpha<0)
@@ -65,7 +59,7 @@ public class Plane extends SceneObject {
         Vector3D collisionLocation = ray.origin.add(alpha, ray.direction);
         normalRay = new Ray(collisionLocation, planeNormal);
         
-        Vector3D q = collisionLocation.subtract(planeLocation);
+        Vector3D q = collisionLocation;
         u = q.dotProduct(planeNorth);
         
         v = q.dotProduct(planeEast);
@@ -84,13 +78,13 @@ public class Plane extends SceneObject {
     }
 
     @Override
-    public List<Vector3D[]> getWireFrame() {
+    public List<Vector3D[]> getWireFrameObjectFrame() {
         List<Vector3D[]> edges = new ArrayList<>();
 
-        Vector3D A = planeLocation.add(0.5,planeNorth).add(0.5,planeEast);
-        Vector3D B = planeLocation.add(0.5,planeNorth).subtract(0.5,planeEast);
-        Vector3D C = planeLocation.subtract(0.5,planeNorth).subtract(0.5,planeEast);
-        Vector3D D = planeLocation.subtract(0.5,planeNorth).add(0.5,planeEast);
+        Vector3D A = new Vector3D(0.5,planeNorth).add(0.5,planeEast);
+        Vector3D B = new Vector3D(0.5,planeNorth).subtract(0.5,planeEast);
+        Vector3D C = new Vector3D(-0.5,planeNorth).subtract(0.5,planeEast);
+        Vector3D D = new Vector3D(-0.5,planeNorth).add(0.5,planeEast);
         
         Vector3D[] edge1 = {A,B};
         Vector3D[] edge2 = {B,C};

@@ -51,6 +51,8 @@ public class Cube extends SceneObject {
      * @param side 
      */
     public Cube(Vector3D centre, double side) {
+        super();
+        
         this.centre = centre;
         this.side = side;
         
@@ -74,13 +76,7 @@ public class Cube extends SceneObject {
     }
     
     @Override
-    public double getFirstCollision(Ray ray) {
-        
-        // Exit early if no chance of collision
-        //Vector3D CminusL = this.centre.subtract(ray.origin);
-        //double closest = (CminusL).getNorm()/Math.abs(CminusL.dotProduct(ray.direction));
-        //if (closest > side/Math.sqrt(2))
-        //    return Double.POSITIVE_INFINITY; // miss
+    public double getFirstCollisionObjectFrame(Ray ray) {
         
         // Cube edges and vertices are the intersections of 6 planes.
         // Need to find points of intersection with each of these planes.
@@ -128,7 +124,7 @@ public class Cube extends SceneObject {
     }
 
     @Override
-    public List<Vector3D[]> getWireFrame() {
+    public List<Vector3D[]> getWireFrameObjectFrame() {
         return new ArrayList<>();
     }
     

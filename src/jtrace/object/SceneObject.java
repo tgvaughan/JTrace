@@ -22,6 +22,7 @@ import jtrace.Colour;
 import jtrace.LightSource;
 import jtrace.Ray;
 import jtrace.Scene;
+import jtrace.object.transformation.Transformation;
 import jtrace.texture.Texture;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
@@ -41,9 +42,14 @@ public abstract class SceneObject {
     private Scene scene;
     
     /**
+     * Coordinate transformations to apply to object.
+     */
+    private final List<Transformation> transformations;
+    
+    /**
      * Textures to apply to object.
      */
-    private List<Texture> textures;
+    private final List<Texture> textures;
     
     /**
      * Details of last collision.
@@ -60,7 +66,7 @@ public abstract class SceneObject {
     static double EPSILON = 1e-5;
     
     /**
-     * UV coordinates of collision point.
+     * UV coordinates of collision point for texture mapping.
      */
     protected double u, v;
     
@@ -68,6 +74,11 @@ public abstract class SceneObject {
      * Light sources visible from last collision point.
      */
     private List<LightSource> visibleLights;
+
+    public SceneObject() {
+        transformations = new ArrayList<>();
+        textures = new ArrayList<>();
+    }
     
     public void setScene(Scene scene) {
         this.scene = scene;
@@ -78,10 +89,39 @@ public abstract class SceneObject {
     }
     
     public void addTexture(Texture texture) {
-        if (textures == null)
-            textures = new ArrayList<>();
-        
         textures.add(texture);
+    }
+    
+    public void addTransformation(Transformation transformation) {
+        transformations.add(transformation);
+    }
+    
+    public Vector3D objectToSceneVector(Vector3D sceneVec) {
+        Vector3D objectVec = sceneVec;
+        for (Transformation transformation : transformations) {
+            objectVec = transformation.apply(objectVec);
+        }
+
+        return objectVec;
+    }
+    
+    public Vector3D sceneToObjectVector(Vector3D objectVec) {
+        Vector3D sceneVec = objectVec;
+        for (int i=transformations.size()-1; i>=0; i--)
+            sceneVec = transformations.get(i).applyInverse(sceneVec);
+        return sceneVec;
+    }
+    
+    public Ray sceneToObjectRay(Ray sceneRay) {
+        return new Ray(
+                sceneToObjectVector(sceneRay.origin),
+                sceneToObjectVector(sceneRay.direction));
+    }
+    
+    public Ray objectToSceneRay(Ray objectRay) {
+        return new Ray(
+                objectToSceneVector(objectRay.origin),
+                objectToSceneVector(objectRay.direction));
     }
     
     public Ray getIncidentRay() {
@@ -165,7 +205,18 @@ public abstract class SceneObject {
      * @param ray incoming ray
      * @return distance from origin of ray to first intersection
      */
-    public abstract double getFirstCollision(Ray ray);
+    public double getFirstCollision(Ray ray) {
+        double dist = getFirstCollisionObjectFrame(sceneToObjectRay(ray));
+        
+        if (dist<Double.NEGATIVE_INFINITY) {
+            incidentRay = objectToSceneRay(incidentRay);
+            normalRay = objectToSceneRay(normalRay);
+        }
+        
+        return dist;
+    }
+    
+    public abstract double getFirstCollisionObjectFrame(Ray ray);
     
     /**
      * Mix values obtained from the layered textures to obtain the colour at
@@ -246,5 +297,17 @@ public abstract class SceneObject {
      * 
      * @return wireframe edges
      */
-    public abstract List<Vector3D[]> getWireFrame();
+    public final List<Vector3D[]> getWireFrame() {
+        List<Vector3D[]> res = new ArrayList<>();
+        for (Vector3D[] coord : getWireFrameObjectFrame()) {
+            Vector3D[] sceneCoord = {
+                objectToSceneVector(coord[0]),
+                objectToSceneVector(coord[1])};
+            res.add(sceneCoord);
+        }
+        
+        return res;
+    }
+    
+    public abstract List<Vector3D[]> getWireFrameObjectFrame();
 }
