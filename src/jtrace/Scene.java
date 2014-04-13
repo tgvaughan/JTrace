@@ -248,12 +248,19 @@ public class Scene {
             renderAxes(image, object);
         }
         
-        // Render axes
+        // Render scene axes
         renderAxes(image, null);
         
         return image;
     }
-    
+   
+    /**
+     * Add a set of axes to an image.  If the object parameter is not null,
+     * the axes corresponding to the object's coordinate system are drawn.
+     * 
+     * @param image Image generated using scene's camera
+     * @param object (Possibly null) object
+     */
     private void renderAxes(BufferedImage image, SceneObject object) {
         
         Graphics gr = image.getGraphics();

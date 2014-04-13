@@ -256,7 +256,7 @@ public abstract class SceneObject {
     public abstract double getV();
     
     /**
-     * Retrieve list of light source visible from location of last
+     * Retrieve list of light sources visible from location of last
      * collision.
      * 
      * @return List of visible light sources.

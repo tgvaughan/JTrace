@@ -29,6 +29,7 @@ import jtrace.object.Cube;
 import jtrace.object.Plane;
 import jtrace.object.transformation.Rotation;
 import jtrace.object.transformation.Scale;
+import jtrace.object.transformation.Translation;
 import jtrace.texture.AmbientFinish;
 import jtrace.texture.DiffuseFinish;
 import jtrace.texture.FlatTexture;
@@ -65,6 +66,7 @@ public class JustAPlane {
         plane.addTexture(floorTexture);
 //        plane.addTransformation(new Scale(2, 1, 1));
         plane.addTransformation(new Rotation(Vector3D.PLUS_K, Math.PI/16));
+//        plane.addTransformation(new Translation(0,-0.5,0));
         
         scene.addObject(plane);
         
