@@ -18,6 +18,7 @@
 package jtrace.object;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import jtrace.Ray;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
@@ -28,16 +29,6 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
  * @author Tim Vaughan <tgvaughan@gmail.com>
  */
 public class Cube extends SceneObject {
-
-    /**
-     * Centre of cube.
-     */
-    Vector3D centre;
-
-    /**
-     * Length of cube side.
-     */
-    double side;
     
     /**
      * Normals for each of the 6 faces
@@ -45,27 +36,22 @@ public class Cube extends SceneObject {
     Ray [] normals;
     
     /**
-     * Create square.
+     * Create cube with unit side.
      * 
-     * @param centre
-     * @param side 
      */
-    public Cube(Vector3D centre, double side) {
+    public Cube() {
         super();
-        
-        this.centre = centre;
-        this.side = side;
         
         normals = new Ray[6];
         for (int i=0; i<6; i++)
             normals[i] = new Ray();
         
-        normals[0].origin = centre.add(0.5*side, Vector3D.PLUS_I);
-        normals[1].origin = centre.add(0.5*side, Vector3D.MINUS_I);
-        normals[2].origin = centre.add(0.5*side, Vector3D.PLUS_J);
-        normals[3].origin = centre.add(0.5*side, Vector3D.MINUS_J);
-        normals[4].origin = centre.add(0.5*side, Vector3D.PLUS_K);
-        normals[5].origin = centre.add(0.5*side, Vector3D.MINUS_K);
+        normals[0].origin = new Vector3D(0.5, Vector3D.PLUS_I);
+        normals[1].origin = new Vector3D(0.5, Vector3D.MINUS_I);
+        normals[2].origin = new Vector3D(0.5, Vector3D.PLUS_J);
+        normals[3].origin = new Vector3D(0.5, Vector3D.MINUS_J);
+        normals[4].origin = new Vector3D(0.5, Vector3D.PLUS_K);
+        normals[5].origin = new Vector3D(0.5, Vector3D.MINUS_K);
         
         normals[0].direction = Vector3D.PLUS_I;
         normals[1].direction = Vector3D.MINUS_I;
@@ -92,9 +78,9 @@ public class Cube extends SceneObject {
             
             Vector3D collisionLocation = ray.origin.add(thisAlpha, ray.direction);
             Vector3D delta = collisionLocation.subtract(normals[i].origin);
-            if (Math.abs(delta.getX())>0.5*side
-                    || Math.abs(delta.getY())>0.5*side
-                    || Math.abs(delta.getZ())>0.5*side) {
+            if (Math.abs(delta.getX())>0.5
+                    || Math.abs(delta.getY())>0.5
+                    || Math.abs(delta.getZ())>0.5) {
                 continue;
             }
             
@@ -125,7 +111,42 @@ public class Cube extends SceneObject {
 
     @Override
     public List<Vector3D[]> getWireFrameObjectFrame() {
-        return new ArrayList<>();
+        
+        Vector3D[] vertices = new Vector3D[8];
+        vertices[0] = new Vector3D(0.5,Vector3D.PLUS_K)
+                .add(0.5,Vector3D.PLUS_I).add(0.5,Vector3D.PLUS_J);
+        vertices[1] = new Vector3D(0.5,Vector3D.PLUS_K)
+                .subtract(0.5,Vector3D.PLUS_I).add(0.5,Vector3D.PLUS_J);
+        vertices[2] = new Vector3D(0.5,Vector3D.PLUS_K)
+                .subtract(0.5,Vector3D.PLUS_I).subtract(0.5,Vector3D.PLUS_J);
+        vertices[3] = new Vector3D(0.5,Vector3D.PLUS_K)
+                .add(0.5,Vector3D.PLUS_I).subtract(0.5,Vector3D.PLUS_J);
+        
+        vertices[4] = new Vector3D(-0.5,Vector3D.PLUS_K)
+                .add(0.5,Vector3D.PLUS_I).add(0.5,Vector3D.PLUS_J);
+        vertices[5] = new Vector3D(-0.5,Vector3D.PLUS_K)
+                .subtract(0.5,Vector3D.PLUS_I).add(0.5,Vector3D.PLUS_J);
+        vertices[6] = new Vector3D(-0.5,Vector3D.PLUS_K)
+                .subtract(0.5,Vector3D.PLUS_I).subtract(0.5,Vector3D.PLUS_J);
+        vertices[7] = new Vector3D(-0.5,Vector3D.PLUS_K)
+                .add(0.5,Vector3D.PLUS_I).subtract(0.5,Vector3D.PLUS_J);
+        
+        Vector3D[][] edges = {
+            {vertices[0],vertices[1]},
+            {vertices[1],vertices[2]},
+            {vertices[2],vertices[3]},
+            {vertices[3],vertices[0]},
+            {vertices[4],vertices[5]},
+            {vertices[5],vertices[6]},
+            {vertices[6],vertices[7]},
+            {vertices[7],vertices[4]},
+            {vertices[0],vertices[4]},
+            {vertices[1],vertices[5]},
+            {vertices[2],vertices[6]},
+            {vertices[3],vertices[7]}
+        };
+        
+        return Arrays.asList(edges);
     }
     
 }

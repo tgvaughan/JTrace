@@ -49,6 +49,16 @@ public class Scale extends Transformation {
     public Scale(double scaleX, double scaleY, double scaleZ) {
         this.scaleVec = new Vector3D(scaleX, scaleY, scaleZ);
     }
+    
+    /**
+     * Construct new scale transformation that scales an object uniformly
+     * in all directions.
+     * 
+     * @param scale scale factor
+     */
+    public Scale(double scale) {
+        this.scaleVec = new Vector3D(scale, scale, scale);
+    }
 
     @Override
     public Vector3D apply(Vector3D vec) {

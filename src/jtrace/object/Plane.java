@@ -35,13 +35,13 @@ public class Plane extends SceneObject {
     /**
      * Create plane that passes through the origin and with a normal pointing
      * in the positive y direction. The positive u and v directions are the
-     * x and z unit vectors.
+     * x and y unit vectors.
      */
     public Plane() {
         super();
 
-        this.planeNormal = Vector3D.PLUS_J;
-        this.planeNorth = Vector3D.PLUS_K;
+        this.planeNormal = Vector3D.PLUS_K;
+        this.planeNorth = Vector3D.PLUS_J;
         this.planeEast = Vector3D.PLUS_I;
     }
 

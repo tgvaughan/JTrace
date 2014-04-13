@@ -65,12 +65,12 @@ public class SpecularFinish extends Finish {
             double projection = lightDir.dotProduct(reflectedRay.direction);
             
             if (projection>0) {
-                // Intensity of specular highlighting:
-                double intensity = Math.pow(projection,tightness)
-                        *light.getScaleSq()/lightDistanceSq;
+                // Digree of illumination:
+                double illum = Math.pow(projection,tightness)
+                        *light.getIntensity(lightDistanceSq);
                 
                 // Scale light colour by intensity and add to specular colour:
-                specularColour = specularColour.add(light.getColour().scale(intensity));
+                specularColour = specularColour.add(light.getColour().scale(illum));
             }
         }
         

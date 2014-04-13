@@ -16,6 +16,7 @@
  */
 package jtrace.object;
 
+import java.util.ArrayList;
 import java.util.List;
 import jtrace.Ray;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
@@ -27,33 +28,25 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
  */
 public class Sphere extends SceneObject {
     
-    // Centre of sphere
-    Vector3D centre;
-    
-    // Radius of sphere
-    double radius;
-    
     /**
      * Constructor for sphere objects.
      * 
      * @param centre
      * @param radius 
      */
-    public Sphere(Vector3D centre, double radius) {
+    public Sphere() {
         super();
         
-        this.centre = centre;
-        this.radius = radius;
     }
 
     @Override
     public double getFirstCollisionObjectFrame(Ray ray) {
         
-        Vector3D displacement = ray.getOrigin().subtract(centre);
+        Vector3D displacement = ray.getOrigin();
         
         double a = ray.getDirection().getNormSq();
         double b = 2.0*ray.getDirection().dotProduct(displacement);
-        double c = displacement.getNormSq() - radius*radius;
+        double c = displacement.getNormSq() - 1.0;
         
         // Check for miss:
         if (b*b < 4.0*a*c)
@@ -80,7 +73,7 @@ public class Sphere extends SceneObject {
         // Record incident and normal rays
         incidentRay = ray;
         Vector3D collisionLocation = ray.direction.scalarMultiply(alpha).add(ray.origin);
-        Vector3D normal = collisionLocation.subtract(centre).normalize();
+        Vector3D normal = collisionLocation.normalize();
         normalRay = new Ray(collisionLocation, normal);
         
         return alpha;
@@ -98,7 +91,33 @@ public class Sphere extends SceneObject {
 
     @Override
     public List<Vector3D[]> getWireFrameObjectFrame() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        List<Vector3D[]> edgeList = new ArrayList<>();
+        
+        int nLongitudeLines = 50;
+        int nLongitudeSteps = 20;
+        
+        for (int i=0; i<nLongitudeLines; i++) {
+            double theta = 2*Math.PI*i/nLongitudeLines;
+            for (int j=0; j<nLongitudeSteps; j++) {
+                double phi = Math.PI*j/nLongitudeSteps;
+                double phiNext = Math.PI*(j+1)/nLongitudeSteps;
+
+                Vector3D p = new Vector3D(
+                        Math.sin(phi)*Math.cos(theta),
+                        Math.sin(phi)*Math.sin(theta),
+                        Math.cos(phi));
+                
+                Vector3D pNext = new Vector3D(
+                        Math.sin(phiNext)*Math.cos(theta),
+                        Math.sin(phiNext)*Math.sin(theta),
+                        Math.cos(phiNext));
+                
+                Vector3D[] edge = {p,pNext};
+                edgeList.add(edge);
+            }
+        }
+        
+        return edgeList;
     }
     
 }

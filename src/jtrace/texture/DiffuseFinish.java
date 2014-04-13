@@ -61,12 +61,12 @@ public class DiffuseFinish extends Finish {
             double projection = lightDir.dotProduct(normalRay.direction);
             
             if (projection>0.0) {
-                // Determine intensity of illumination:
-                double intensity = projection*light.getScaleSq()/lightDistanceSq;
+                // Determine degree of illumination:
+                double illum = projection*light.getIntensity(lightDistanceSq);
             
-                // Scale light colour by intensity and add to diffuse colour:
+                // Scale light colour by illumination and add to diffuse colour:
                 diffuseColour = diffuseColour
-                        .add(light.getColour().scale(intensity));      
+                        .add(light.getColour().scale(illum));      
             }
         }
         

@@ -28,17 +28,21 @@ public class LightSource {
     Vector3D location;
     double scaleSq;
     Colour colour;
+    boolean invSqFalloff;
     
     public LightSource(Vector3D location, double scale) {
         this.location = location;
         this.scaleSq = scale*scale;
         this.colour = new Colour(1,1,1);
+        this.invSqFalloff = true;
     }
     
-    public LightSource(Vector3D location, double scale, Colour colour) {
+    public LightSource(Vector3D location, double scale,
+            Colour colour, boolean invSqFalloff) {
         this.location= location;
         this.scaleSq = scale*scale;
         this.colour = colour;
+        this.invSqFalloff = invSqFalloff;
     }
     
     /**
@@ -60,11 +64,18 @@ public class LightSource {
     }
     
     /**
-     * Obtain squared scale factor for light source.
+     * Obtain light intensity at given distance.  Calculating this here means
+     * the light source has control over the falloff.
      * 
-     * @return square of scale factor
+     * @param distanceSq square of distance
+     * @return light intensity
      */
-    public double getScaleSq() {
-        return scaleSq;
+    public double getIntensity(double distanceSq) {
+        
+        double intensity = scaleSq;
+        if (invSqFalloff)
+            intensity /= distanceSq;
+        
+        return intensity;
     }
 }

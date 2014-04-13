@@ -76,7 +76,7 @@ public class Camera {
         // the image in that direction to account for the matrix
         // coordinate scheme used in images.
         double tanThetaUp = -fovUp*(y/(double)height - 0.5);
-        double tanThetaRight = -fovRight*(x/(double)width - 0.5);
+        double tanThetaRight = fovRight*(x/(double)width - 0.5);
         
         Vector3D raydir = new Vector3D(1.0, direction);
         raydir = raydir.add(tanThetaUp, up);
@@ -103,7 +103,7 @@ public class Camera {
         double lr = l.dotProduct(right);
         double lp = l.dotProduct(direction);
         
-        coord[0] = (int)Math.round(((lr/lp)*(-1.0/fovRight) + 0.5)*width);
+        coord[0] = (int)Math.round(((lr/lp)*(1.0/fovRight) + 0.5)*width);
         coord[1] = (int)Math.round(((lu/lp)*(-1.0/fovUp) + 0.5)*height);
         
         return coord;

@@ -103,4 +103,28 @@ public class Colour {
     public Colour filter(Colour c) {
         return new Colour(r*c.r, g*c.g, b*c.b);
     }
+    
+    /**
+     * Mix this and another colour in proportions governed by factor, which
+     * must be between 0 and 1.  A factor of 0 means that the resulting colour
+     * will be entirely this.  A factor of 1 means the colour will be c.
+     * Factors between these extremes will yield a mixture.
+     * 
+     * @param factor
+     * @param c
+     * @return 
+     */
+    public Colour mix(double factor, Colour c) {
+        return this.scale(1.0-factor).add(c.scale(factor));
+    }
+    
+    public static Colour white = new Colour(1,1,1);
+    public static Colour red = new Colour(1,0,0);
+    public static Colour green = new Colour(0,1,0);
+    public static Colour blue = new Colour(0,0,1);
+    public static Colour black = new Colour(0,0,0);
+    
+    public static Colour cyan = new Colour(0,1,1);
+    public static Colour yellow = new Colour(1,1,0);
+    public static Colour magenta = new Colour(1,0,1);
 }
