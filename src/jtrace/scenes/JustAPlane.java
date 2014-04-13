@@ -59,12 +59,12 @@ public class JustAPlane {
         FlatTexture floorTexture = new FlatTexture(
                 new ImagePigment(new File("wood.jpg"), 1.0));
         floorTexture.addFinish(new DiffuseFinish(1.0));
-        floorTexture.addFinish(new AmbientFinish(0.1));
+        //floorTexture.addFinish(new AmbientFinish(0.1));
         
         Plane plane = new Plane();
         plane.addTexture(floorTexture);
 //        plane.addTransformation(new Scale(2, 1, 1));
-        plane.addTransformation(new Rotation(Vector3D.PLUS_J, Math.PI/4));
+        plane.addTransformation(new Rotation(Vector3D.PLUS_K, Math.PI/16));
         
         scene.addObject(plane);
         

@@ -16,6 +16,7 @@
  */
 package jtrace;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -234,6 +235,7 @@ public class Scene {
         Graphics gr = image.getGraphics(); 
         gr.setColor(java.awt.Color.cyan);
         
+        // Object wireframes
         for (SceneObject object : sceneObjects) {
             for (Vector3D[] edge : object.getWireFrame()) {
                 int[] coord1 = camera.getPixel(width, height, edge[0]);
@@ -241,9 +243,58 @@ public class Scene {
                 
                 gr.drawLine(coord1[0], coord1[1], coord2[0], coord2[1]);
             }
+            
+            // Render object axes
+            renderAxes(image, object);
         }
         
+        // Render axes
+        renderAxes(image, null);
+        
         return image;
+    }
+    
+    private void renderAxes(BufferedImage image, SceneObject object) {
+        
+        Graphics gr = image.getGraphics();
+        int[] origin, xhat, yhat, zhat;
+
+        if (object == null) {
+            origin = camera.getPixel(image.getWidth(), image.getHeight(), Vector3D.ZERO);
+            xhat = camera.getPixel(image.getWidth(), image.getHeight(), Vector3D.PLUS_I);
+            yhat = camera.getPixel(image.getWidth(), image.getHeight(), Vector3D.PLUS_J);
+            zhat = camera.getPixel(image.getWidth(), image.getHeight(), Vector3D.PLUS_K);
+        } else {
+            origin = camera.getPixel(image.getWidth(), image.getHeight(),
+                    object.objectToSceneVector(Vector3D.ZERO));
+            xhat = camera.getPixel(image.getWidth(), image.getHeight(),
+                    object.objectToSceneVector(Vector3D.PLUS_I));
+            yhat = camera.getPixel(image.getWidth(), image.getHeight(),
+                    object.objectToSceneVector(Vector3D.PLUS_J));
+            zhat = camera.getPixel(image.getWidth(), image.getHeight(),
+                    object.objectToSceneVector(Vector3D.PLUS_K));
+        }
+        
+        String objName;
+        if (object==null)
+            objName = "";
+        else
+            objName = "(" + object.getClass().getSimpleName() + ")";
+        
+        gr.setColor(Color.red);
+        gr.drawLine(origin[0], origin[1], xhat[0], xhat[1]);
+        gr.setColor(Color.white);
+        gr.drawString("x " + objName, xhat[0], xhat[1]);
+        
+        gr.setColor(Color.green);
+        gr.drawLine(origin[0], origin[1], yhat[0], yhat[1]);
+        gr.setColor(Color.white);
+        gr.drawString("y " + objName, yhat[0], yhat[1]);
+        
+        gr.setColor(Color.blue);
+        gr.drawLine(origin[0], origin[1], zhat[0], zhat[1]);
+        gr.setColor(Color.white);
+        gr.drawString("z " + objName, zhat[0], zhat[1]);
     }
 
 }
