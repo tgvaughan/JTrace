@@ -3,3 +3,7 @@
 /build.xml
 /nbproject/
 /manifest.mf
+
+# Random image files
+*.jpg
+*.out
