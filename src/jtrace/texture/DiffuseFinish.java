@@ -16,11 +16,9 @@
  */
 package jtrace.texture;
 
-import java.util.List;
 import jtrace.Colour;
 import jtrace.LightSource;
 import jtrace.Ray;
-import jtrace.Scene;
 import jtrace.object.SceneObject;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 

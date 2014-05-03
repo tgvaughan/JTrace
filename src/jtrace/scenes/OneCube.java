@@ -54,7 +54,8 @@ public class OneCube {
         Scene scene = new Scene();
         scene.setCamera(camera);
         
-        scene.addLightSource(new LightSource(new Vector3D(-3,-3,3), 4));
+        scene.addLightSource(new LightSource(new Vector3D(-3,3,3), 4));
+        scene.addLightSource(new LightSource(new Vector3D(3,-3,1), 4));
         
         FlatTexture cubeTexture = (new FlatTexture(new SolidPigment(new Colour(0,0,1))));
         cubeTexture.addFinish(new DiffuseFinish(1.0));
@@ -62,7 +63,7 @@ public class OneCube {
         //cubeTexture.addFinish(new MirrorFinish(0.2));
         
         Cube cube = new Cube();
-        cube.addTransformation(new Scale(0.5));
+        //cube.addTransformation(new Scale(0.5));
         cube.addTexture(cubeTexture);
         scene.addObject(cube);
         
@@ -71,11 +72,11 @@ public class OneCube {
         floorTexture.addFinish(new DiffuseFinish(1.0));
         
         Plane plane = new Plane();
-        plane.addTransformation(new Translation(0, 0, -0.25));
+        plane.addTransformation(new Translation(0, 0, -0.5));
         plane.addTexture(floorTexture);
         scene.addObject(plane);
         
-        BufferedImage image = scene.renderWireFrame(1440, 900, 10);
+        BufferedImage image = scene.render(1440, 900, 10);
         
         ImageIO.write(image, "PNG", new File("out.png"));
     }

@@ -208,7 +208,7 @@ public abstract class SceneObject {
     public double getFirstCollision(Ray ray) {
         double dist = getFirstCollisionObjectFrame(sceneToObjectRay(ray));
         
-        if (dist<Double.NEGATIVE_INFINITY) {
+        if (dist > 0 && dist < Double.POSITIVE_INFINITY) {
             incidentRay = objectToSceneRay(incidentRay);
             normalRay = objectToSceneRay(normalRay);
         }

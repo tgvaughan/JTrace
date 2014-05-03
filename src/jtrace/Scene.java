@@ -209,7 +209,7 @@ public class Scene {
                 // Reset recursion depth:
                 recursionDepth = 0;
                 
-                debugThisRay = random.nextDouble()<debugFrac;
+                //debugThisRay = random.nextDouble()<debugFrac;
                 
                 // Trace ray through scene:
                 Colour pixelColour = traceRay(ray);

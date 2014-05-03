@@ -37,7 +37,6 @@ public class Cube extends SceneObject {
     
     /**
      * Create cube with unit side.
-     * 
      */
     public Cube() {
         super();
